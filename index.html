@@ -82,25 +82,24 @@
             font-size: 16px;
         }
 
+        /* FIX: CSS for search buttons updated for the new Clear button */
         .search-bar button {
             padding: 12px 20px;
             background-color: #3498db;
             color: white;
             border: none;
-            border-radius: 0 4px 4px 0;
             cursor: pointer;
+            font-size: 16px;
         }
 
-        /* Search Results */
-        .search-results {
-            margin: 20px 0;
-            display: none;
+        .search-bar button:last-child {
+            border-radius: 0 4px 4px 0;
         }
 
-        .search-results h2 {
-            margin-bottom: 15px;
-            color: #2c3e50;
+        #clear-search-btn {
+            background-color: #e74c3c; /* Red color for clear button */
         }
+
 
         /* Book Grid */
         .book-grid {
@@ -201,9 +200,12 @@
             resize: vertical;
         }
 
+        /* FIX: Star rating CSS logic corrected for intuitive hovering and clicking */
         .star-rating {
             display: flex;
-            gap: 10px;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
         }
 
         .star-rating input {
@@ -217,14 +219,9 @@
             transition: color 0.2s;
         }
 
-        .star-rating input:checked ~ label {
-            color: #ddd;
-        }
-
+        .star-rating input:checked ~ label,
         .star-rating label:hover,
-        .star-rating label:hover ~ label,
-        .star-rating input:checked + label,
-        .star-rating input:checked ~ label {
+        .star-rating label:hover ~ label {
             color: #f39c12;
         }
 
@@ -342,10 +339,8 @@
     </style>
 </head>
 <body>
-    <!-- Notification -->
     <div class="notification" id="notification"></div>
 
-    <!-- Header -->
     <header>
         <div class="container">
             <div class="header-content">
@@ -361,27 +356,19 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="container">
-        <!-- Search Bar -->
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Search for books, authors, or reviews...">
             <button onclick="searchReviews()"><i class="fas fa-search"></i> Search</button>
+            <button id="clear-search-btn" style="display: none;"><i class="fas fa-times"></i> Clear</button>
         </div>
 
-        <!-- Search Results -->
-        <div class="search-results" id="search-results">
-            <h2>Search Results</h2>
-            <div id="search-results-container"></div>
+        <div id="featured-books-section">
+            <h2>Recently Reviewed Books</h2>
+            <div class="book-grid" id="book-grid">
+                </div>
         </div>
 
-        <!-- Featured Books -->
-        <h2>Recently Reviewed Books</h2>
-        <div class="book-grid" id="book-grid">
-            <!-- Books will be dynamically added here -->
-        </div>
-
-        <!-- Review Form -->
         <div class="review-form" id="add-review">
             <h2>Add Your Review</h2>
             <form id="reviewForm">
@@ -400,16 +387,11 @@
                 <div class="form-group">
                     <label>Your Rating</label>
                     <div class="star-rating">
-                        <input type="radio" id="star5" name="rating" value="5" required>
-                        <label for="star5"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star4" name="rating" value="4">
-                        <label for="star4"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star3" name="rating" value="3">
-                        <label for="star3"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star2" name="rating" value="2">
-                        <label for="star2"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star1" name="rating" value="1">
-                        <label for="star1"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star5" name="rating" value="5"><label for="star5"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i class="fas fa-star"></i></label>
                     </div>
                 </div>
                 <div class="form-group">
@@ -420,16 +402,13 @@
             </form>
         </div>
 
-        <!-- Recent Reviews -->
         <div class="reviews" id="reviews">
-            <h2>Recent Reviews from Students</h2>
+            <h2 id="reviews-heading">Recent Reviews from Students</h2>
             <div id="reviews-container">
-                <!-- Reviews will be dynamically added here -->
-            </div>
+                </div>
         </div>
     </main>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -451,16 +430,16 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2023 BookReviews. All rights reserved.</p>
+                <p>&copy; 2025 BookReviews. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Store reviews in localStorage
+        // Reads reviews from localStorage when the page loads.
         let reviews = JSON.parse(localStorage.getItem('bookReviews')) || [];
         
-        // Sample initial reviews
+        // Sample initial reviews (only runs if localStorage is empty)
         if (reviews.length === 0) {
             reviews = [
                 {
@@ -468,68 +447,81 @@
                     bookTitle: "The Great Gatsby",
                     bookAuthor: "F. Scott Fitzgerald",
                     rating: 5,
-                    review: "Fitzgerald's masterpiece captures the essence of the Jazz Age while exploring themes of idealism, resistance to change, and the American Dream. The symbolism throughout the novel is incredible!",
-                    date: "2023-10-15"
+                    review: "Fitzgerald's masterpiece captures the essence of the Jazz Age...",
+                    date: "2025-09-10"
                 },
                 {
                     studentName: "Michael Chen",
                     bookTitle: "1984",
                     bookAuthor: "George Orwell",
                     rating: 4,
-                    review: "Orwell's dystopian vision is as relevant today as when it was written. The concept of Big Brother and thoughtcrime is terrifying. The ending was particularly powerful and haunting.",
-                    date: "2023-10-12"
+                    review: "Orwell's dystopian vision is as relevant today as when it was written...",
+                    date: "2025-09-08"
                 }
             ];
-            saveReviews();
+            saveReviews(); // Save the initial sample reviews
         }
 
-        // Save reviews to localStorage
+        // Saves the current 'reviews' array to localStorage.
         function saveReviews() {
             localStorage.setItem('bookReviews', JSON.stringify(reviews));
         }
 
-        // Display reviews
+        // FIX: Display function is updated to show search status and handle UI changes
         function displayReviews(reviewsToShow = reviews) {
             const reviewsContainer = document.getElementById('reviews-container');
             const bookGrid = document.getElementById('book-grid');
+            const reviewsHeading = document.getElementById('reviews-heading');
+            const featuredBooksSection = document.getElementById('featured-books-section');
+            const searchTerm = document.getElementById('search-input').value;
             
             // Clear previous content
             reviewsContainer.innerHTML = '';
             bookGrid.innerHTML = '';
+
+            // Logic to show/hide sections and update heading based on search
+            if (searchTerm.trim() !== '') {
+                reviewsHeading.textContent = `Search Results for "${searchTerm}"`;
+                featuredBooksSection.style.display = 'none'; // Hide featured books during search
+            } else {
+                reviewsHeading.textContent = 'Recent Reviews from Students';
+                featuredBooksSection.style.display = 'block'; // Show featured books when not searching
+            }
             
-            // Display books in the grid
-            const uniqueBooks = [];
-            reviewsToShow.forEach(review => {
-                const bookKey = `${review.bookTitle}-${review.bookAuthor}`;
-                if (!uniqueBooks.includes(bookKey)) {
-                    uniqueBooks.push(bookKey);
-                    
+            // Display books in the grid (only when not searching)
+            if (searchTerm.trim() === '') {
+                const uniqueBooks = [];
+                [...reviews].sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(review => {
+                    const bookKey = `${review.bookTitle}-${review.bookAuthor}`;
+                    if (!uniqueBooks.find(b => b.key === bookKey)) {
+                        uniqueBooks.push({key: bookKey, review: review});
+                    }
+                });
+                
+                uniqueBooks.forEach(item => {
                     const bookCard = document.createElement('div');
                     bookCard.className = 'book-card';
                     bookCard.innerHTML = `
                         <div class="book-cover"><i class="fas fa-book"></i></div>
                         <div class="book-info">
-                            <h3 class="book-title">${review.bookTitle}</h3>
-                            <p class="book-author">${review.bookAuthor}</p>
-                            <div class="rating">
-                                ${getStarRating(getAverageRating(review.bookTitle, review.bookAuthor))}
-                            </div>
-                            <p class="book-description">${getBookDescription(review.bookTitle)}</p>
-                            <button class="btn" onclick="showBookReviews('${review.bookTitle}')">Read Reviews</button>
+                            <h3 class="book-title">${item.review.bookTitle}</h3>
+                            <p class="book-author">${item.review.bookAuthor}</p>
+                            <div class="rating">${getStarRating(getAverageRating(item.review.bookTitle, item.review.bookAuthor))}</div>
+                            <p class="book-description">${getBookDescription(item.review.bookTitle)}</p>
+                            <button class="btn" onclick="showBookReviews('${item.review.bookTitle}')">Read Reviews</button>
                         </div>
                     `;
                     bookGrid.appendChild(bookCard);
-                }
-            });
+                });
+            }
             
-            // Display reviews
+            // Display review cards
             if (reviewsToShow.length === 0) {
-                reviewsContainer.innerHTML = '<p>No reviews found. Be the first to add one!</p>';
+                reviewsContainer.innerHTML = searchTerm.trim() !== '' 
+                    ? '<p>No reviews found matching your search. Try another term or clear the search.</p>'
+                    : '<p>No reviews have been added yet. Be the first!</p>';
             } else {
-                // Sort by date, newest first
-                const sortedReviews = [...reviewsToShow].sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                sortedReviews.forEach(review => {
+                reviewsToShow.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(review => {
                     const reviewCard = document.createElement('div');
                     reviewCard.className = 'review-card';
                     reviewCard.innerHTML = `
@@ -537,9 +529,7 @@
                             <span class="reviewer">${review.studentName}</span>
                             <span class="review-date">${review.date}</span>
                         </div>
-                        <div class="rating">
-                            ${getStarRating(review.rating)}
-                        </div>
+                        <div class="rating">${getStarRating(review.rating)}</div>
                         <h3>${review.bookTitle} by ${review.bookAuthor}</h3>
                         <p class="review-content">${review.review}</p>
                     `;
@@ -548,113 +538,53 @@
             }
         }
 
-        // Display search results
-        function displaySearchResults(reviewsToShow) {
-            const searchResults = document.getElementById('search-results');
-            const searchResultsContainer = document.getElementById('search-results-container');
-            
-            // Clear previous content
-            searchResultsContainer.innerHTML = '';
-            
-            if (reviewsToShow.length === 0) {
-                searchResults.style.display = 'none';
-                return;
-            }
-            
-            // Show search results section
-            searchResults.style.display = 'block';
-            
-            // Display search results
-            reviewsToShow.forEach(review => {
-                const reviewCard = document.createElement('div');
-                reviewCard.className = 'review-card';
-                reviewCard.innerHTML = `
-                    <div class="review-header">
-                        <span class="reviewer">${review.studentName}</span>
-                        <span class="review-date">${review.date}</span>
-                    </div>
-                    <div class="rating">
-                        ${getStarRating(review.rating)}
-                    </div>
-                    <h3>${review.bookTitle} by ${review.bookAuthor}</h3>
-                    <p class="review-content">${review.review}</p>
-                `;
-                searchResultsContainer.appendChild(reviewCard);
-            });
-            
-            // Scroll to search results
-            searchResults.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Get star rating HTML
         function getStarRating(rating) {
             let stars = '';
-            const fullStars = Math.floor(rating);
-            const hasHalfStar = rating % 1 !== 0;
-            
-            for (let i = 0; i < fullStars; i++) {
-                stars += '<i class="fas fa-star"></i>';
+            const roundedRating = Math.round(rating * 2) / 2; // Round to nearest 0.5
+            for (let i = 1; i <= 5; i++) {
+                if (i <= roundedRating) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else if (i - 0.5 === roundedRating) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
             }
-            
-            if (hasHalfStar) {
-                stars += '<i class="fas fa-star-half-alt"></i>';
-            }
-            
-            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-            for (let i = 0; i < emptyStars; i++) {
-                stars += '<i class="far fa-star"></i>';
-            }
-            
             stars += ` <span>(${rating.toFixed(1)})</span>`;
             return stars;
         }
 
-        // Get average rating for a book
         function getAverageRating(bookTitle, bookAuthor) {
-            const bookReviews = reviews.filter(review => 
-                review.bookTitle === bookTitle && review.bookAuthor === bookAuthor
-            );
-            
+            const bookReviews = reviews.filter(r => r.bookTitle === bookTitle && r.bookAuthor === bookAuthor);
             if (bookReviews.length === 0) return 0;
-            
-            const totalRating = bookReviews.reduce((sum, review) => sum + review.rating, 0);
+            const totalRating = bookReviews.reduce((sum, r) => sum + r.rating, 0);
             return totalRating / bookReviews.length;
         }
 
-        // Get book description
         function getBookDescription(bookTitle) {
-            const descriptions = {
-                "To Kill a Mockingbird": "A gripping tale of racial injustice and childhood innocence in the American South.",
-                "1984": "A dystopian social science fiction novel that examines the consequences of totalitarianism.",
-                "The Great Gatsby": "A story of wealth, love, and the American Dream in the Jazz Age.",
-                "Pride and Prejudice": "A romantic novel of manners that depicts the emotional development of protagonist Elizabeth Bennet."
-            };
-            
-            return descriptions[bookTitle] || "A wonderful book that has captivated readers around the world.";
+            const descriptions = { "1984": "A dystopian social science fiction novel...", "The Great Gatsby": "A story of wealth, love, and the American Dream..." };
+            return descriptions[bookTitle] || "A wonderful book that has captivated readers.";
         }
 
-        // Show notification
         function showNotification(message, isSuccess = true) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
             notification.style.backgroundColor = isSuccess ? '#2ecc71' : '#e74c3c';
             notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
+            setTimeout(() => { notification.style.display = 'none'; }, 3000);
         }
 
-        // Search reviews
+        // FIX: Search function updated to show/hide clear button and filter main list
         function searchReviews() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const clearBtn = document.getElementById('clear-search-btn');
             
             if (searchTerm.trim() === '') {
-                // If search is empty, hide search results and show all content
-                document.getElementById('search-results').style.display = 'none';
-                displayReviews();
+                clearSearch(); // If search is empty, just clear everything
                 return;
             }
+
+            clearBtn.style.display = 'inline-block'; // Show the clear button
             
             const filteredReviews = reviews.filter(review => 
                 review.bookTitle.toLowerCase().includes(searchTerm) ||
@@ -663,24 +593,24 @@
                 review.studentName.toLowerCase().includes(searchTerm)
             );
             
-            // Display search results at the top
-            displaySearchResults(filteredReviews);
-            
-            // Also update the main content
             displayReviews(filteredReviews);
-            
-            if (filteredReviews.length === 0) {
-                showNotification('No reviews found matching your search', false);
-            }
+        }
+        
+        // NEW: Function to clear the search input and results
+        function clearSearch() {
+            const searchInput = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-search-btn');
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            displayReviews(); // Resets to show all reviews
         }
 
-        // Show reviews for a specific book
         function showBookReviews(bookTitle) {
             document.getElementById('search-input').value = bookTitle;
             searchReviews();
+            document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Handle form submission
         document.getElementById('reviewForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -695,38 +625,27 @@
                 return;
             }
             
-            const newReview = {
-                studentName,
-                bookTitle,
-                bookAuthor,
-                rating: parseInt(rating.value),
-                review: reviewText,
-                date: new Date().toISOString().split('T')[0]
-            };
+            const newReview = { studentName, bookTitle, bookAuthor, rating: parseInt(rating.value), review: reviewText, date: new Date().toISOString().split('T')[0] };
             
             reviews.push(newReview);
-            saveReviews();
+            saveReviews(); // This is the crucial step for persistence
             
-            // Reset form
             this.reset();
-            
-            // Update display
             displayReviews();
-            
-            // Show notification
             showNotification('Your review has been submitted successfully!');
-            
-            // Scroll to reviews section
             document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' });
         });
 
-        // Initialize the page
+        // Initialize the page when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             displayReviews();
             
-            // Make search work when pressing Enter
+            // NEW: Set up listener for the new clear button
+            document.getElementById('clear-search-btn').addEventListener('click', clearSearch);
+            
             document.getElementById('search-input').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent form submission
                     searchReviews();
                 }
             });
