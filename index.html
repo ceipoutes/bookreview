@@ -3,14 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookReviews - Share Your Reading Experience</title>
+    <title>Outesbookreview</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* All CSS styles from your previous code remain the same... */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f5f5f5; color: #333; line-height: 1.6; }
+        body { background-color: #f5f5ff; color: #333; line-height: 1.6; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        header { background-color: #2c3e50; color: white; padding: 1rem 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* FIX: Header is now sticky */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
         .header-content { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.8rem; font-weight: bold; color: #3498db; }
         .logo span { color: #e74c3c; }
@@ -47,7 +57,7 @@
         .review-header { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
         .reviewer { font-weight: 500; color: #2c3e50; }
         .review-date { color: #7f8c8d; font-size: 0.9rem; }
-        .notification { position: fixed; top: 20px; right: 20px; padding: 15px 20px; background-color: #2ecc71; color: white; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: none; z-index: 1000; }
+        .notification { position: fixed; top: 80px; right: 20px; padding: 15px 20px; background-color: #2ecc71; color: white; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: none; z-index: 1001; }
     </style>
 </head>
 <body>
@@ -55,7 +65,7 @@
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">Book<span>Reviews</span></div>
+                 <div class="logo">Outesbook<span>review</span></div>
                 <nav>
                     <ul>
                         <li><a id="home-btn">Home</a></li>
@@ -109,43 +119,46 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
 
     <script>
-        // NEW: Paste your Firebase configuration object here
+        // PASTE YOUR FIREBASE CONFIGURATION OBJECT HERE
         const firebaseConfig = {
-            apiKey: "AIzaSyDZP3KwrswjdiDgMhvRe3cH0ngOqthEA9U",
-            authDomain: "outesbookreview.firebaseapp.com",
-            projectId: "outesbookreview",
-            storageBucket: "outesbookreview.firebasestorage.app",
-            messagingSenderId: "768178017652",
-            appId: "1:768178017652:web:bd358f130f8165f2f90821",
-            measurementId: "G-YM24P69ZVW"
+            apiKey: "AIzaSy...YOUR_API_KEY",
+            authDomain: "your-project-id.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project-id.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef123456"
         };
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-    
-        // This array will hold all reviews from the database
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const reviewsCollection = db.collection('reviews');
+
         let allReviews = [];
 
-        // --- REAL-TIME DATA LISTENER ---
-        // This function automatically gets data from Firebase and updates the page
+        // This listener gets data from Firebase and handles errors
         reviewsCollection.orderBy("date", "desc").onSnapshot(snapshot => {
             allReviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            console.log("Reviews loaded from Firebase:", allReviews);
-            displayContent(); // Redraw the content whenever data changes
+            console.log("Data successfully loaded from Firebase.");
+            displayContent();
+        }, error => {
+            // FIX: This section now catches and logs errors
+            console.error("Firebase Error: ", error);
+            document.getElementById('reviews-container').innerHTML = `<p style="color:red;">Error: Could not load reviews. Check the developer console (F12) for details.</p>`;
+            // This error often means you need to create an index in Firestore.
+            // The console will provide a link to create it automatically.
         });
 
-        // --- DISPLAY LOGIC ---
         function displayContent() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
             const reviewsToShow = searchTerm ? allReviews.filter(review => 
-                review.bookTitle.toLowerCase().includes(searchTerm) ||
-                review.bookAuthor.toLowerCase().includes(searchTerm) ||
-                review.review.toLowerCase().includes(searchTerm) ||
-                review.studentName.toLowerCase().includes(searchTerm)
+                (review.bookTitle && review.bookTitle.toLowerCase().includes(searchTerm)) ||
+                (review.bookAuthor && review.bookAuthor.toLowerCase().includes(searchTerm)) ||
+                (review.review && review.review.toLowerCase().includes(searchTerm)) ||
+                (review.studentName && review.studentName.toLowerCase().includes(searchTerm))
             ) : allReviews;
 
             displayReviews(reviewsToShow, searchTerm);
-            displayBookGrid(allReviews); // The grid always shows all unique books
+            displayBookGrid(allReviews);
         }
 
         function displayReviews(reviewsToShow, searchTerm) {
@@ -165,12 +178,12 @@
                 card.className = 'review-card';
                 card.innerHTML = `
                     <div class="review-header">
-                        <span class="reviewer">${review.studentName}</span>
+                        <span class="reviewer">${review.studentName || 'Anonymous'}</span>
                         <span class="review-date">${new Date(review.date).toLocaleDateString()}</span>
                     </div>
                     <div class="rating">${getStarRating(review.rating, false)}</div>
-                    <h3>${review.bookTitle} by ${review.bookAuthor}</h3>
-                    <p>${review.review}</p>
+                    <h3>${review.bookTitle || 'No Title'} by ${review.bookAuthor || 'Unknown Author'}</h3>
+                    <p>${review.review || ''}</p>
                 `;
                 container.appendChild(card);
             });
@@ -182,13 +195,12 @@
             const searchTerm = document.getElementById('search-input').value.trim();
             grid.innerHTML = '';
 
-            // Hide the featured books section if a search is active
             featuredSection.style.display = searchTerm ? 'none' : 'block';
             if (searchTerm) return;
 
             const uniqueBooks = [...new Map(sourceReviews.map(item => [item.bookTitle, item])).values()];
             
-            uniqueBooks.slice(0, 6).forEach(review => { // Show up to 6 unique books
+            uniqueBooks.slice(0, 6).forEach(review => {
                 const card = document.createElement('div');
                 card.className = 'book-card';
                 const avgRating = getAverageRating(review.bookTitle);
@@ -204,7 +216,6 @@
             });
         }
         
-        // --- UTILITY FUNCTIONS ---
         function getAverageRating(bookTitle) {
             const bookReviews = allReviews.filter(r => r.bookTitle === bookTitle);
             if (bookReviews.length === 0) return 0;
@@ -222,8 +233,14 @@
             if (showCount) stars += ` <span>(${rating.toFixed(1)})</span>`;
             return stars;
         }
+        
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => { notification.style.display = 'none'; }, 3000);
+        }
 
-        // --- EVENT HANDLERS ---
         function searchReviews() {
             const searchTerm = document.getElementById('search-input').value;
             document.getElementById('clear-search-btn').style.display = searchTerm ? 'inline-block' : 'none';
@@ -236,18 +253,14 @@
             displayContent();
         }
 
-        // Event listener for the form submission
         document.getElementById('reviewForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const submitBtn = e.target.querySelector('button');
-            const studentName = document.getElementById('studentName').value;
-            const bookTitle = document.getElementById('bookTitle').value;
-            const bookAuthor = document.getElementById('bookAuthor').value;
-            const rating = document.querySelector('input[name="rating"]:checked');
-            const review = document.getElementById('review').value;
+            const form = e.target;
+            const submitBtn = form.querySelector('button');
+            const rating = form.querySelector('input[name="rating"]:checked');
 
             if (!rating) {
-                alert('Please select a rating.');
+                showNotification('Please select a rating.');
                 return;
             }
             
@@ -255,37 +268,34 @@
             submitBtn.textContent = 'Submitting...';
 
             const newReview = {
-                studentName,
-                bookTitle,
-                bookAuthor,
+                studentName: form.studentName.value,
+                bookTitle: form.bookTitle.value,
+                bookAuthor: form.bookAuthor.value,
                 rating: parseInt(rating.value),
-                review,
+                review: form.review.value,
                 date: new Date().toISOString()
             };
 
             try {
-                // NEW: Add the new review to the Firebase database
                 await reviewsCollection.add(newReview);
-                document.getElementById('reviewForm').reset();
+                showNotification('Review submitted successfully!');
+                form.reset();
             } catch (error) {
                 console.error("Error adding document: ", error);
-                alert('Failed to submit review. Please try again.');
+                showNotification('Failed to submit review. Please try again.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Review';
             }
         });
 
-        // FIX: Event listener for the Home button to reset the view
         document.getElementById('home-btn').addEventListener('click', () => {
             clearSearch();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         document.getElementById('clear-search-btn').addEventListener('click', clearSearch);
-        document.getElementById('search-input').addEventListener('keypress', e => {
-            if (e.key === 'Enter') searchReviews();
-        });
+        document.getElementById('search-input').addEventListener('keyup', e => searchReviews());
     </script>
 </body>
 </html>
