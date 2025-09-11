@@ -58,6 +58,10 @@
         .reviewer { font-weight: 500; color: #2c3e50; }
         .review-date { color: #7f8c8d; font-size: 0.9rem; }
         .notification { position: fixed; top: 80px; right: 20px; padding: 15px 20px; background-color: #2ecc71; color: white; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: none; z-index: 1001; }
+        .error { color: #e74c3c; background: #ffeaea; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .loading { text-align: center; padding: 20px; }
+        .loading::after { content: '...'; animation: dots 1.5s infinite; }
+        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; } }
     </style>
 </head>
 <body>
@@ -80,12 +84,14 @@
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Search for books, authors, or reviews...">
             <button onclick="searchReviews()"><i class="fas fa-search"></i> Search</button>
-            <button id="clear-search-btn" style="display: none;"><i class="fas fa-times"></i> Clear</button>
+            <button id="clear-search-btn" style="display: none;" onclick="clearSearch()"><i class="fas fa-times"></i> Clear</button>
         </div>
 
         <div class="reviews" id="reviews">
             <h2 id="reviews-heading">Recent Reviews</h2>
-            <div id="reviews-container"><p>Loading reviews from the cloud...</p></div>
+            <div id="reviews-container">
+                <div class="loading">Loading reviews from the cloud</div>
+            </div>
         </div>
         
         <div id="featured-books-section">
@@ -119,34 +125,83 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
 
     <script>
-        // PASTE YOUR FIREBASE CONFIGURATION OBJECT HERE
+        // Firebase configuration - Replace with your actual config
         const firebaseConfig = {
-            apiKey: "AIzaSy...YOUR_API_KEY",
-            authDomain: "your-project-id.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project-id.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
+            // Replace this with your Firebase project configuration
+            apiKey: "AIzaSyDZP3KwrswjdiDgMhvRe3cH0ngOqthEA9U",
+            authDomain: "outesbookreview.firebaseapp.com",
+            projectId: "outesbookreview",
+            storageBucket: "outesbookreview.firebasestorage.app"
+            messagingSenderId: "768178017652",
+            appId: "1:768178017652:web:bd358f130f8165f2f90821",
+            measurementId: "G-YM24P69ZVW"
         };
 
-        firebase.initializeApp(firebaseConfig);
+        // Initialize Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase initialized successfully");
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            document.getElementById('reviews-container').innerHTML = `
+                <div class="error">
+                    <p>Firebase initialization failed. Please check your configuration.</p>
+                    <p>Error: ${error.message}</p>
+                </div>
+            `;
+        }
+
         const db = firebase.firestore();
         const reviewsCollection = db.collection('reviews');
 
         let allReviews = [];
 
-        // This listener gets data from Firebase and handles errors
-        reviewsCollection.orderBy("date", "desc").onSnapshot(snapshot => {
-            allReviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            console.log("Data successfully loaded from Firebase.");
-            displayContent();
-        }, error => {
-            // FIX: This section now catches and logs errors
-            console.error("Firebase Error: ", error);
-            document.getElementById('reviews-container').innerHTML = `<p style="color:red;">Error: Could not load reviews. Check the developer console (F12) for details.</p>`;
-            // This error often means you need to create an index in Firestore.
-            // The console will provide a link to create it automatically.
-        });
+        // Function to load reviews from Firebase
+        function loadReviews() {
+            document.getElementById('reviews-container').innerHTML = '<div class="loading">Loading reviews from the cloud</div>';
+            
+            reviewsCollection.orderBy("date", "desc").get()
+            .then((querySnapshot) => {
+                allReviews = [];
+                querySnapshot.forEach((doc) => {
+                    allReviews.push({ id: doc.id, ...doc.data() });
+                });
+                console.log("Reviews loaded successfully:", allReviews.length);
+                displayContent();
+            })
+            .catch((error) => {
+                console.error("Error loading reviews:", error);
+                document.getElementById('reviews-container').innerHTML = `
+                    <div class="error">
+                        <p>Error loading reviews: ${error.message}</p>
+                        <p>Please check your Firebase configuration and make sure you have set up Firestore correctly.</p>
+                        <button onclick="loadReviews()" class="btn">Try Again</button>
+                    </div>
+                `;
+            });
+        }
+
+        // Set up real-time listener for new reviews
+        function setupRealtimeListener() {
+            reviewsCollection.orderBy("date", "desc")
+            .onSnapshot((querySnapshot) => {
+                const newReviews = [];
+                querySnapshot.forEach((doc) => {
+                    newReviews.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Only update if we have new data
+                if (newReviews.length !== allReviews.length || 
+                    JSON.stringify(newReviews) !== JSON.stringify(allReviews)) {
+                    allReviews = newReviews;
+                    console.log("Real-time update received. Reviews count:", allReviews.length);
+                    displayContent();
+                }
+            }, (error) => {
+                console.error("Real-time listener error:", error);
+                // Don't show error to user for real-time updates
+            });
+        }
 
         function displayContent() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
@@ -169,7 +224,7 @@
             heading.textContent = searchTerm ? `Search Results for "${searchTerm}"` : 'Recent Reviews';
 
             if (reviewsToShow.length === 0) {
-                container.innerHTML = `<p>${searchTerm ? 'No reviews found matching your search.' : 'No reviews yet. Be the first!'}</p>`;
+                container.innerHTML = `<p>${searchTerm ? 'No reviews found matching your search.' : 'No reviews yet. Be the first to add one!'}</p>`;
                 return;
             }
 
@@ -179,7 +234,7 @@
                 card.innerHTML = `
                     <div class="review-header">
                         <span class="reviewer">${review.studentName || 'Anonymous'}</span>
-                        <span class="review-date">${new Date(review.date).toLocaleDateString()}</span>
+                        <span class="review-date">${review.date ? new Date(review.date).toLocaleDateString() : 'No date'}</span>
                     </div>
                     <div class="rating">${getStarRating(review.rating, false)}</div>
                     <h3>${review.bookTitle || 'No Title'} by ${review.bookAuthor || 'Unknown Author'}</h3>
@@ -234,9 +289,10 @@
             return stars;
         }
         
-        function showNotification(message) {
+        function showNotification(message, isError = false) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
+            notification.style.backgroundColor = isError ? '#e74c3c' : '#2ecc71';
             notification.style.display = 'block';
             setTimeout(() => { notification.style.display = 'none'; }, 3000);
         }
@@ -260,7 +316,7 @@
             const rating = form.querySelector('input[name="rating"]:checked');
 
             if (!rating) {
-                showNotification('Please select a rating.');
+                showNotification('Please select a rating.', true);
                 return;
             }
             
@@ -282,7 +338,7 @@
                 form.reset();
             } catch (error) {
                 console.error("Error adding document: ", error);
-                showNotification('Failed to submit review. Please try again.');
+                showNotification('Failed to submit review. Please try again.', true);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Review';
@@ -295,7 +351,15 @@
         });
 
         document.getElementById('clear-search-btn').addEventListener('click', clearSearch);
-        document.getElementById('search-input').addEventListener('keyup', e => searchReviews());
+        document.getElementById('search-input').addEventListener('keyup', e => {
+            if (e.key === 'Enter') searchReviews();
+        });
+
+        // Initialize the application
+        window.onload = function() {
+            loadReviews();
+            setupRealtimeListener();
+        };
     </script>
 </body>
 </html>
