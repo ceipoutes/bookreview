@@ -1,4 +1,351 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Review App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome for star icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <style>
+        :root {
+            --accent-blue: #3778c2;
+            --accent-green: #43aa8b;
+            --accent-orange: #f7b267;
+            --background: #f4f9f9;
+            --text-muted: #888;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--background);
+            color: #222;
+        }
+        #main-nav {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--accent-blue);
+            color: white;
+            padding: 1em 2em;
+        }
+        #main-nav .brand {
+            font-size: 1.2em;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        #main-nav button {
+            background: white;
+            color: var(--accent-blue);
+            border: none;
+            border-radius: 4px;
+            padding: 0.5em 1em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        #main-nav button:hover {
+            background: var(--accent-green);
+            color: white;
+        }
+        #notification {
+            display: none;
+            position: fixed;
+            top: 1em;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-blue);
+            color: white;
+            padding: 1em 2em;
+            border-radius: 6px;
+            z-index: 100;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+        }
+        #login-container {
+            max-width: 320px;
+            margin: 80px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 2em 2em 1em 2em;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+        }
+        #login-container h2 {
+            margin-top: 0;
+            color: var(--accent-blue);
+        }
+        #loginForm input {
+            width: 100%;
+            padding: 0.7em;
+            margin: 0.5em 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        #loginForm button {
+            width: 100%;
+            background: var(--accent-blue);
+            color: white;
+            padding: 0.7em;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: bold;
+            margin-top: 1em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #loginForm button:hover {
+            background: var(--accent-green);
+        }
+        #message {
+            color: #e74c3c;
+            margin-top: 0.5em;
+            min-height: 1.5em;
+        }
+        #main-content {
+            display: none;
+            max-width: 900px;
+            margin: 32px auto;
+            padding: 0 1.5em 3em 1.5em;
+        }
+        #reviews {
+            margin-top: 2em;
+        }
+        #reviews-heading {
+            font-size: 1.3em;
+            margin: 0 0 0.7em 0;
+        }
+        .review-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 1.3em;
+            padding: 1em 1.2em;
+            transition: box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .review-card:hover {
+            box-shadow: 0 4px 18px rgba(67,170,139,0.14);
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+        .rating {
+            color: var(--accent-orange);
+        }
+        .review-book-icon {
+            font-size: 1.1em;
+            margin-right: 0.25em;
+        }
+        #search-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.4em;
+        }
+        #search-input {
+            flex: 1;
+            padding: 0.7em;
+            border: 1px solid #bbb;
+            border-radius: 4px 0 0 4px;
+            font-size: 1em;
+        }
+        #clear-search-btn {
+            display: none;
+            padding: 0.7em 1em;
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: -1px;
+            transition: background 0.18s;
+        }
+        #clear-search-btn:hover {
+            background: #f49740;
+        }
+        #feat-i-section {
+            margin-top: 2.5em;
+        }
+        #book-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.1em;
+            margin-top: 1.3em;
+        }
+        .book-card {
+            width: 180px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+            padding: 1em 1em 1.2em 1em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+        .book-card:hover {
+            box-shadow: 0 4px 16px rgba(55,120,194,0.13);
+        }
+        .book-cover {
+            margin-bottom: 1em;
+        }
+        .svg-book {
+            width: 53px;
+            height: 53px;
+            display: block;
+        }
+        .book-title {
+            font-size: 1.07em;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin: 0 0 0.3em 0;
+            text-align: center;
+        }
+        .book-author {
+            color: var(--text-muted);
+            font-size: 0.98em;
+            margin-bottom: 0.3em;
+            text-align: center;
+        }
+        /* Review form styles */
+        #review-form-section {
+            margin-top: 2em;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.09);
+            padding: 2em 2em 1em 2em;
+        }
+        #reviewForm label {
+            font-weight: 500;
+        }
+        #reviewForm input, #reviewForm textarea {
+            width: 100%;
+            padding: 0.7em;
+            margin-bottom: 1em;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        #reviewForm textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        #reviewForm .rating-group {
+            margin-bottom: 1em;
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+        }
+        #reviewForm .rating-group label {
+            margin: 0 4px 0 0;
+            color: var(--accent-orange);
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        #reviewForm button {
+            background: var(--accent-green);
+            color: white;
+            padding: 0.7em 1.5em;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.04em;
+            cursor: pointer;
+            transition: background 0.19s;
+        }
+        #reviewForm button:hover {
+            background: var(--accent-blue);
+        }
+        .loading {
+            color: var(--accent-blue);
+            font-weight: bold;
+            margin: 2em 0;
+            text-align: center;
+        }
+        .error {
+            color: #e74c3c;
+            background: #fbeee9;
+            border: 1px solid #f9d6b9;
+            border-radius: 6px;
+            padding: 1em 1.5em;
+            margin: 1.2em 0;
+        }
+        @media (max-width: 700px) {
+            #main-content, #review-form-section {
+                padding: 1em 0.2em;
+            }
+            #book-grid {
+                gap: 0.5em;
+            }
+            .book-card {
+                width: 45vw;
+                min-width: 120px;
+                max-width: 200px;
+            }
+        }
+    </style>
+    <!-- Firebase (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div id="notification"></div>
+    <nav id="main-nav">
+        <span class="brand">Book Review App</span>
+        <button id="home-btn">Home</button>
+    </nav>
+    <div id="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="name">Name</label>
+            <input type="text" id="name" autocomplete="username" required>
+            <label for="code">Code</label>
+            <input type="password" id="code" autocomplete="current-password" required>
+            <button type="submit">Login</button>
+            <div id="message"></div>
+        </form>
+    </div>
+    <div id="main-content">
+        <section id="search-bar">
+            <input type="text" id="search-input" placeholder="Search books or reviews...">
+            <button id="clear-search-btn" type="button">Clear</button>
+        </section>
+        <section id="feat-i-section">
+            <h2>Featured Books</h2>
+            <div id="book-grid"></div>
+        </section>
+        <section id="reviews">
+            <h2 id="reviews-heading">Recent Reviews</h2>
+            <div id="reviews-container"></div>
+        </section>
+        <section id="review-form-section">
+            <h2>Submit a Review</h2>
+            <form id="reviewForm">
+                <label for="bookTitle">Book Title</label>
+                <input type="text" id="bookTitle" name="bookTitle" required>
+                <label for="bookAuthor">Book Author</label>
+                <input type="text" id="bookAuthor" name="bookAuthor" required>
+                <label>Rating</label>
+                <div class="rating-group">
+                    <label><input type="radio" name="rating" value="1"> <i class="fas fa-star"></i></label>
+                    <label><input type="radio" name="rating" value="2"> <i class="fas fa-star"></i></label>
+                    <label><input type="radio" name="rating" value="3"> <i class="fas fa-star"></i></label>
+                    <label><input type="radio" name="rating" value="4"> <i class="fas fa-star"></i></label>
+                    <label><input type="radio" name="rating" value="5"> <i class="fas fa-star"></i></label>
+                </div>
+                <label for="review">Your Review</label>
+                <textarea id="review" name="review" required></textarea>
+                <button type="submit">Submit Review</button>
+            </form>
+        </section>
+    </div>
+    <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Firebase configuration
     const firebaseConfig = {
@@ -13,12 +360,15 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
         firebase.initializeApp(firebaseConfig);
     } catch (error) {
-        document.getElementById('reviews-container').innerHTML = `
-            <div class="error">
-                <p>Firebase initialization failed. Please check your configuration.</p>
-                <p>Error: ${error.message}</p>
-            </div>
-        `;
+        const reviewsContainer = document.getElementById('reviews-container');
+        if (reviewsContainer) {
+            reviewsContainer.innerHTML = `
+                <div class="error">
+                    <p>Firebase initialization failed. Please check your configuration.</p>
+                    <p>Error: ${error.message}</p>
+                </div>
+            `;
+        }
     }
 
     const db = firebase.firestore();
@@ -27,50 +377,54 @@ document.addEventListener('DOMContentLoaded', function() {
     let loggedInUser = null; // A variable to store the logged-in user's name
 
     // --- NEW: LOGIN LOGIC ---
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const nameInput = document.getElementById('name').value;
-        const codeInput = document.getElementById('code').value;
-        const messageEl = document.getElementById('message');
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nameInput = document.getElementById('name') ? document.getElementById('name').value : "";
+            const codeInput = document.getElementById('code') ? document.getElementById('code').value : "";
+            const messageEl = document.getElementById('message');
 
-        messageEl.textContent = "";
+            if (messageEl) messageEl.textContent = "";
 
-        const usersCollection = db.collection('users');
-        const q = usersCollection.where("name", "==", nameInput).where("code", "==", codeInput);
+            const usersCollection = db.collection('users');
+            const q = usersCollection.where("name", "==", nameInput).where("code", "==", codeInput);
 
-        try {
-            const querySnapshot = await q.get();
-            if (!querySnapshot.empty) {
-                // Login successful!
-                const userDoc = querySnapshot.docs[0].data();
-                loggedInUser = userDoc.name; // Store the user's name
-                showMainContent();
-            } else {
-                // Login failed
-                messageEl.textContent = "Invalid name or code.";
+            try {
+                const querySnapshot = await q.get();
+                if (!querySnapshot.empty) {
+                    // Login successful!
+                    const userDoc = querySnapshot.docs[0].data();
+                    loggedInUser = userDoc.name; // Store the user's name
+                    showMainContent();
+                } else {
+                    // Login failed
+                    if (messageEl) messageEl.textContent = "Invalid name or code.";
+                }
+            } catch (error) {
+                console.error("Error during login: ", error);
+                if (messageEl) messageEl.textContent = "An error occurred. Please try again.";
             }
-        } catch (error) {
-            console.error("Error during login: ", error);
-            messageEl.textContent = "An error occurred. Please try again.";
-        }
-    });
+        });
+    }
 
     // --- NEW: FUNCTION TO SHOW MAIN CONTENT AFTER LOGIN ---
     function showMainContent() {
-        // Hide the login form container
-        document.getElementById('login-container').style.display = 'none';
-        // Show the main content and navigation
-        document.getElementById('main-content').style.display = 'block';
-        document.getElementById('main-nav').style.display = 'flex';
-        // Now that the content is visible, load the reviews
+        const loginContainer = document.getElementById('login-container');
+        const mainContent = document.getElementById('main-content');
+        const mainNav = document.getElementById('main-nav');
+        if (loginContainer) loginContainer.style.display = 'none';
+        if (mainContent) mainContent.style.display = 'block';
+        if (mainNav) mainNav.style.display = 'flex';
         loadReviews();
         setupRealtimeListener();
     }
     
     // All of your original functions
     function loadReviews() {
-        document.getElementById('reviews-container').innerHTML = '<div class="loading">Loading reviews from the cloud</div>';
+        const reviewsContainer = document.getElementById('reviews-container');
+        if (reviewsContainer) reviewsContainer.innerHTML = '<div class="loading">Loading reviews from the cloud</div>';
         reviewsCollection.orderBy("date", "desc").get()
         .then((querySnapshot) => {
             allReviews = [];
@@ -80,12 +434,14 @@ document.addEventListener('DOMContentLoaded', function() {
             displayContent();
         })
         .catch((error) => {
-            document.getElementById('reviews-container').innerHTML = `
-                <div class="error">
-                    <p>Error loading reviews: ${error.message}</p>
-                    <button onclick="loadReviews()" class="btn">Try Again</button>
-                </div>
-            `;
+            if (reviewsContainer) {
+                reviewsContainer.innerHTML = `
+                    <div class="error">
+                        <p>Error loading reviews: ${error.message}</p>
+                        <button onclick="loadReviews()" class="btn">Try Again</button>
+                    </div>
+                `;
+            }
         });
     }
 
@@ -104,7 +460,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayContent() {
-        const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+        const searchInput = document.getElementById('search-input');
+        const reviewsContainer = document.getElementById('reviews-container');
+        if (!searchInput || !reviewsContainer) return;
+        const searchTerm = searchInput.value.toLowerCase().trim();
         let reviewsToShow = allReviews;
         if (searchTerm) {
             reviewsToShow = allReviews.filter(review =>
@@ -121,6 +480,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayReviews(reviewsToShow, searchTerm) {
         const container = document.getElementById('reviews-container');
         const heading = document.getElementById('reviews-heading');
+        if (!container || !heading) return;
         container.innerHTML = '';
 
         heading.textContent = searchTerm ? `Search Results for "${searchTerm}"` : 'Recent Reviews';
@@ -156,7 +516,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayBookGrid(sourceReviews) {
         const grid = document.getElementById('book-grid');
         const featuredSection = document.getElementById('feat-i-section');
-        const searchTerm = document.getElementById('search-input').value.trim();
+        const searchInput = document.getElementById('search-input');
+        if (!grid || !featuredSection || !searchInput) return;
+        const searchTerm = searchInput.value.trim();
         grid.innerHTML = '';
         featuredSection.style.display = searchTerm ? 'none' : 'block';
         if (searchTerm) return;
@@ -223,6 +585,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showNotification(message, isError = false) {
         const notification = document.getElementById('notification');
+        if (!notification) return;
         notification.textContent = message;
         notification.style.background = isError ? '#e74c3c' : 'var(--accent-blue)';
         notification.style.display = 'block';
@@ -230,80 +593,101 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function searchReviews() {
-        const searchTerm = document.getElementById('search-input').value;
-        document.getElementById('clear-search-btn').style.display = searchTerm ? 'inline-block' : 'none';
+        const searchInput = document.getElementById('search-input');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        if (!searchInput || !clearSearchBtn) return;
+        const searchTerm = searchInput.value;
+        clearSearchBtn.style.display = searchTerm ? 'inline-block' : 'none';
         displayContent();
     }
 
     function clearSearch() {
-        document.getElementById('search-input').value = '';
-        document.getElementById('clear-search-btn').style.display = 'none';
+        const searchInput = document.getElementById('search-input');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        if (!searchInput || !clearSearchBtn) return;
+        searchInput.value = '';
+        clearSearchBtn.style.display = 'none';
         displayContent();
     }
 
     function searchByBook(bookTitle) {
+        const searchInput = document.getElementById('search-input');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const reviewsSection = document.getElementById('reviews');
+        if (!searchInput || !clearSearchBtn) return;
         if (!bookTitle) return;
-        document.getElementById('search-input').value = bookTitle;
-        document.getElementById('clear-search-btn').style.display = 'inline-block';
+        searchInput.value = bookTitle;
+        clearSearchBtn.style.display = 'inline-block';
         displayContent();
-        document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' });
+        if (reviewsSection) reviewsSection.scrollIntoView({ behavior: 'smooth' });
     }
 
     // --- UPDATED: REVIEW FORM SUBMISSION ---
-    document.getElementById('reviewForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const form = e.target;
-        const submitBtn = form.querySelector('button');
-        const rating = form.querySelector('input[name="rating"]:checked');
-        
-        if (!rating) {
-            showNotification('Please select a rating.', true);
-            return;
-        }
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector('button');
+            const rating = form.querySelector('input[name="rating"]:checked');
+            
+            if (!rating) {
+                showNotification('Please select a rating.', true);
+                return;
+            }
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
 
-        // Check if a user is logged in
-        if (!loggedInUser) {
-            showNotification('You must be logged in to submit a review.', true);
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Review';
-            return;
-        }
+            // Check if a user is logged in
+            if (!loggedInUser) {
+                showNotification('You must be logged in to submit a review.', true);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Review';
+                return;
+            }
 
-        const newReview = {
-            studentName: loggedInUser, // Use the logged-in user's name
-            bookTitle: form.bookTitle.value,
-            bookAuthor: form.bookAuthor.value,
-            rating: parseInt(rating.value),
-            review: form.review.value,
-            date: new Date().toISOString()
-        };
+            const newReview = {
+                studentName: loggedInUser, // Use the logged-in user's name
+                bookTitle: form.bookTitle.value,
+                bookAuthor: form.bookAuthor.value,
+                rating: parseInt(rating.value),
+                review: form.review.value,
+                date: new Date().toISOString()
+            };
 
-        try {
-            await reviewsCollection.add(newReview);
-            showNotification('Review submitted successfully!');
-            form.reset();
-        } catch (error) {
-            showNotification('Failed to submit review. Please try again.', true);
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Review';
-        }
-    });
+            try {
+                await reviewsCollection.add(newReview);
+                showNotification('Review submitted successfully!');
+                form.reset();
+            } catch (error) {
+                showNotification('Failed to submit review. Please try again.', true);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Review';
+            }
+        });
+    }
 
     // --- OTHER EVENT LISTENERS ---
-    document.getElementById('home-btn').addEventListener('click', () => {
-        clearSearch();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    const homeBtn = document.getElementById('home-btn');
+    if (homeBtn) {
+        homeBtn.addEventListener('click', () => {
+            clearSearch();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 
-    document.getElementById('clear-search-btn').addEventListener('click', clearSearch);
-    document.getElementById('search-input').addEventListener('keyup', e => {
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+    if (clearSearchBtn) clearSearchBtn.addEventListener('click', clearSearch);
+
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.addEventListener('keyup', e => {
         if (e.key === 'Enter') searchReviews();
     });
 
     // window.onload is no longer needed since content is controlled by login
 });
 </script>
+</body>
+</html>
