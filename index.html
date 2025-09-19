@@ -6,123 +6,138 @@
     <title>Outesbookreview</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-main: #f7fafc;
+            --bg-card: #ffffff;
+            --text-main: #232323;
+            --text-muted: #767676;
+            --accent-blue: #3778c2;
+            --accent-green: #43aa8b;
+            --accent-coral: #f7b267;
+            --accent-yellow: #ffe066;
+            --border-color: #e1e6eb;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
-            background: linear-gradient(120deg, #e1fbe2 60%, #fdfde1 100%);
-            color: #333; line-height: 1.7; min-height: 100vh;
+            background: var(--bg-main);
+            color: var(--text-main); line-height: 1.7; min-height: 100vh;
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header {
-            background: linear-gradient(90deg, #7fc55b 80%, #ffe066 100%);
-            color: white;
-            padding: 1.2rem 0;
-            box-shadow: 0 4px 18px rgba(44,62,80,0.10);
+            background: #fff;
+            color: var(--text-main);
+            padding: 1rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
         }
         .header-content { display: flex; justify-content: space-between; align-items: center; }
         .logo {
             font-size: 2rem; font-weight: bold; letter-spacing: 1px;
             display: flex; align-items: baseline; gap: 0.15em; user-select: none;
         }
-        .logo .outes { color: #56c596; font-weight: 700; }
-        .logo .book { color: #ffe066; font-weight: 700;}
-        .logo .review { color: #aad576; font-weight: 700;}
+        .logo .outes { color: var(--accent-blue); font-weight: 700; }
+        .logo .book { color: var(--accent-green); font-weight: 700;}
+        .logo .review { color: var(--accent-coral); font-weight: 700;}
         nav ul { display: flex; list-style: none; }
         nav ul li { margin-left: 24px; }
-        nav ul li a { color: white; text-decoration: none; transition: color 0.3s; cursor: pointer; font-size: 1.1rem;}
-        nav ul li a:hover { color: #ffe066; }
-        .search-bar { margin: 30px 0 20px 0; display: flex; box-shadow: 0 2px 8px #22223b0a; border-radius: 6px; background: #fff; }
-        .search-bar input { flex: 1; padding: 14px; border: none; border-radius: 6px 0 0 6px; font-size: 17px; background: #f7fbe1;}
-        .search-bar button { padding: 14px 22px; background: #aad576; color: #333; border: none; cursor: pointer; font-size: 17px; }
+        nav ul li a { color: var(--text-muted); text-decoration: none; transition: color 0.3s; cursor: pointer; font-size: 1.1rem; font-weight: 500;}
+        nav ul li a:hover { color: var(--accent-blue); }
+        .search-bar { margin: 30px 0 20px 0; display: flex; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-radius: 6px; background: #fff; border: 1px solid var(--border-color); }
+        .search-bar input { flex: 1; padding: 14px; border: none; border-radius: 6px 0 0 6px; font-size: 17px; background: transparent;}
+        .search-bar button { padding: 14px 22px; background: var(--accent-blue); color: #fff; border: none; cursor: pointer; font-size: 17px; transition: background 0.2s;}
+        .search-bar button:hover { background: var(--accent-green); }
         .search-bar button:last-child { border-radius: 0 6px 6px 0;}
-        #clear-search-btn { background: #ffe066; color: #333; }
+        #clear-search-btn { background: var(--accent-coral); color: #fff; }
+        #clear-search-btn:hover { background: #e59a4f; }
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px; margin: 32px 0; }
         .book-card {
-            background: linear-gradient(120deg, #fcffe5 70%, #e9fce3 100%);
+            background: var(--bg-card);
             border-radius: 13px;
             overflow: hidden;
-            box-shadow: 0 4px 16px #22223b14;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex; flex-direction: column; align-items: center;
-            border: 1.2px solid #eaffd3;
+            border: 1.5px solid var(--border-color);
             cursor: pointer;
         }
-        .book-card:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 8px 24px #22223b22; background: #f5fbe5;}
+        .book-card:hover { transform: translateY(-6px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
         .book-cover {
             height: 120px; width: 100%;
             display: flex; align-items: center; justify-content: center;
-            background: #f8ffe5;
+            background: #fdfdff;
             font-size: 3.2rem;
-            color: #aad576;
+            color: var(--accent-blue);
             margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
         }
         .book-info { padding: 13px 12px 16px 12px; width: 100%; text-align: center;}
-        .book-title { font-size: 1.1rem; margin-bottom: 5px; color: #59a96a; font-weight: 600;}
-        .book-author { color: #8d9440; margin-bottom: 7px; }
-        .rating { color: #ffe066; margin-bottom: 8px; }
+        .book-title { font-size: 1.1rem; margin-bottom: 5px; color: var(--text-main); font-weight: 600;}
+        .book-author { color: var(--text-muted); margin-bottom: 7px; }
+        .rating { color: var(--accent-yellow); margin-bottom: 8px; }
         .review-form {
-            background: linear-gradient(100deg, #fff 70%, #f5ffe5 100%);
+            background: var(--bg-card);
             padding: 28px;
             border-radius: 13px;
-            box-shadow: 0 4px 12px #22223b10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             margin: 36px 0;
-            border: 1.2px solid #eaffd3;
+            border: 1.2px solid var(--border-color);
         }
-        .review-form h2 { margin-bottom: 20px; color: #59a96a; font-weight: 700;}
+        .review-form h2 { margin-bottom: 20px; color: var(--accent-blue); font-weight: 700;}
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
         .form-group input, .form-group textarea {
             width: 100%;
             padding: 11px;
-            border: 1.2px solid #e1e6eb;
+            border: 1.2px solid var(--border-color);
             border-radius: 6px;
             font-size: 16px;
-            background: #f8ffe5;
-            transition: border 0.2s;
+            background: #fdfdff;
+            transition: border 0.2s, box-shadow 0.2s;
         }
-        .form-group input:focus, .form-group textarea:focus { border: 1.2px solid #aad576; background: #fffbe5; outline: none;}
+        .form-group input:focus, .form-group textarea:focus { border: 1.2px solid var(--accent-blue); background: #fff; outline: none; box-shadow: 0 0 0 3px var(--accent-blue)22;}
         .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 5px; }
         .star-rating input { display: none; }
-        .star-rating label { font-size: 26px; color: #eee; cursor: pointer; transition: color 0.2s; }
-        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #ffe066; }
+        .star-rating label { font-size: 26px; color: #ccc; cursor: pointer; transition: color 0.2s; }
+        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: var(--accent-yellow); }
         .btn {
-            background: linear-gradient(90deg, #aad576 80%, #ffe066 100%);
-            color: #333; border: none; padding: 13px 22px; border-radius: 6px;
+            background: var(--accent-blue);
+            color: #fff; border: none; padding: 13px 22px; border-radius: 6px;
             cursor: pointer; font-size: 17px; transition: background .3s, box-shadow .2s;
-            font-weight: 600; box-shadow: 0 2px 10px #aad57624;
+            font-weight: 600; box-shadow: 0 2px 10px var(--accent-blue)24;
         }
-        .btn:hover { background: linear-gradient(90deg, #59a96a 80%, #ffe066 100%);}
+        .btn:hover { background: var(--accent-green);}
         .reviews { margin: 35px 0; }
         .review-card {
             background: #fff;
             padding: 22px 15px 14px 15px;
             border-radius: 12px;
-            box-shadow: 0 2px 8px #22223b0a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             margin-bottom: 18px;
-            border: 1.2px solid #eaffd3;
+            border: 1.2px solid var(--border-color);
             transition: box-shadow 0.2s;
             display: flex; flex-direction: column; gap: 2px;
             cursor: pointer;
         }
-        .review-card:hover { box-shadow: 0 8px 24px #aad57622; background: #f5ffe5;}
+        .review-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
         .review-header { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
-        .reviewer { font-weight: 500; color: #59a96a; }
-        .review-date { color: #8d9440; font-size: 0.96rem; }
+        .reviewer { font-weight: 500; color: var(--accent-blue); }
+        .review-date { color: var(--text-muted); font-size: 0.96rem; }
         .notification {
             position: fixed; top: 80px; right: 20px; padding: 15px 20px;
-            background: linear-gradient(90deg, #aad576 80%, #ffe066 100%);
-            color: #333; border-radius: 8px; box-shadow: 0 4px 18px #22223b22; display: none; font-size: 1.07rem;
+            background: var(--accent-blue);
+            color: #fff; border-radius: 8px; box-shadow: 0 4px 18px rgba(0,0,0,0.15); display: none; font-size: 1.07rem;
         }
         .error {
             color: #e74c3c; background: #ffeaea; padding: 12px; border-radius: 6px; margin: 10px 0; border: 1.2px solid #ffbdbd;
         }
-        .loading { text-align: center; padding: 22px; font-size: 1.1rem;}
+        .loading { text-align: center; padding: 22px; font-size: 1.1rem; color: var(--text-muted);}
         .loading::after { content: '...'; animation: dots 1.5s infinite; }
         @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; } }
         @media (max-width: 700px) {
-            .container { padding: 0 7px;}
+            .container { padding: 0 15px;}
             .header-content { flex-direction: column; gap: 1em;}
             .search-bar { flex-direction: column;}
             .search-bar input, .search-bar button { border-radius: 6px !important; }
@@ -135,7 +150,7 @@
             vertical-align: middle;
             margin-right: 7px;
             font-size: 1.1em;
-            color: #aad576;
+            color: var(--accent-blue);
         }
     </style>
 </head>
@@ -305,7 +320,7 @@
                     <h3>
                         <span class="review-book-icon" title="Book">&#128218;</span>
                         ${review.bookTitle || 'No Title'}
-                        <span style="color: #8d9440; font-weight:400; font-size: 0.9em;">by ${review.bookAuthor || 'Unknown Author'}</span>
+                        <span style="color: var(--text-muted); font-weight:400; font-size: 0.9em;">by ${review.bookAuthor || 'Unknown Author'}</span>
                     </h3>
                     <p>${review.review || ''}</p>
                 `;
@@ -341,12 +356,12 @@
                 }
             }
 
-            // SVG Book Icon for modern look
+            // SVG Book Icon with the NEW palette
             const svgBook = `<svg class="svg-book" viewBox="0 0 48 48" fill="none">
-                <rect x="4" y="8" width="40" height="32" rx="6" fill="#ffe066"/>
+                <rect x="4" y="8" width="40" height="32" rx="6" fill="#3778c2"/>
                 <rect x="8" y="12" width="32" height="24" rx="4" fill="#fff"/>
-                <path d="M12 16h24M12 20h24M12 24h24" stroke="#aad576" stroke-width="2" stroke-linecap="round"/>
-                <rect x="4" y="8" width="40" height="32" rx="6" stroke="#7fc55b" stroke-width="2"/>
+                <path d="M12 16h24M12 20h24M12 24h24" stroke="#f7b267" stroke-width="2" stroke-linecap="round"/>
+                <rect x="4" y="8" width="40" height="32" rx="6" stroke="#43aa8b" stroke-width="2"/>
             </svg>`;
 
             selectedBooks.forEach(review => {
@@ -380,16 +395,14 @@
                 else if (i - 0.5 <= rating) stars += '<i class="fas fa-star-half-alt"></i>';
                 else stars += '<i class="far fa-star"></i>';
             }
-            if (showCount) stars += ` <span>(${rating.toFixed(1)})</span>`;
+            if (showCount) stars += ` <span style="color: var(--text-muted); font-size: 0.9em;">(${rating.toFixed(1)})</span>`;
             return stars;
         }
         
         function showNotification(message, isError = false) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
-            notification.style.background = isError
-                ? 'linear-gradient(90deg, #e74c3c 80%, #ffbdbd 100%)'
-                : 'linear-gradient(90deg, #aad576 80%, #ffe066 100%)';
+            notification.style.background = isError ? '#e74c3c' : 'var(--accent-blue)';
             notification.style.display = 'block';
             setTimeout(() => { notification.style.display = 'none'; }, 3000);
         }
