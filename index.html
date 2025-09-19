@@ -1,159 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outesbookreview</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-main: #f7fafc;
-            --bg-card: #ffffff;
-            --text-main: #232323;
-            --text-muted: #767676;
-            --accent-blue: #3778c2;
-            --accent-green: #43aa8b;
-            --accent-coral: #f7b267;
-            --accent-yellow: #ffe066;
-            --border-color: #e1e6eb;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body {
-            background: var(--bg-main);
-            color: var(--text-main); line-height: 1.7; min-height: 100vh;
-        }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        header {
-            background: #fff;
-            color: var(--text-main);
-            padding: 1rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .header-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo {
-            font-size: 2rem; font-weight: bold; letter-spacing: 1px;
-            display: flex; align-items: baseline; gap: 0.15em; user-select: none;
-        }
-        .logo .outes { color: var(--accent-blue); font-weight: 700; }
-        .logo .book { color: var(--accent-green); font-weight: 700;}
-        .logo .review { color: var(--accent-coral); font-weight: 700;}
-        nav ul { display: flex; list-style: none; }
-        nav ul li { margin-left: 24px; }
-        nav ul li a { color: var(--text-muted); text-decoration: none; transition: color 0.3s; cursor: pointer; font-size: 1.1rem; font-weight: 500;}
-        nav ul li a:hover { color: var(--accent-blue); }
-        .search-bar { margin: 30px 0 20px 0; display: flex; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-radius: 6px; background: #fff; border: 1px solid var(--border-color); }
-        .search-bar input { flex: 1; padding: 14px; border: none; border-radius: 6px 0 0 6px; font-size: 17px; background: transparent;}
-        .search-bar button { padding: 14px 22px; background: var(--accent-blue); color: #fff; border: none; cursor: pointer; font-size: 17px; transition: background 0.2s;}
-        .search-bar button:hover { background: var(--accent-green); }
-        .search-bar button:last-child { border-radius: 0 6px 6px 0;}
-        #clear-search-btn { background: var(--accent-coral); color: #fff; }
-        #clear-search-btn:hover { background: #e59a4f; }
-        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px; margin: 32px 0; }
-        .book-card {
-            background: var(--bg-card);
-            border-radius: 13px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex; flex-direction: column; align-items: center;
-            border: 1.5px solid var(--border-color);
-            cursor: pointer;
-        }
-        .book-card:hover { transform: translateY(-6px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-        .book-cover {
-            height: 120px; width: 100%;
-            display: flex; align-items: center; justify-content: center;
-            background: #fdfdff;
-            font-size: 3.2rem;
-            color: var(--accent-blue);
-            margin-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .book-info { padding: 13px 12px 16px 12px; width: 100%; text-align: center;}
-        .book-title { font-size: 1.1rem; margin-bottom: 5px; color: var(--text-main); font-weight: 600;}
-        .book-author { color: var(--text-muted); margin-bottom: 7px; }
-        .rating { color: var(--accent-yellow); margin-bottom: 8px; }
-        .review-form {
-            background: var(--bg-card);
-            padding: 28px;
-            border-radius: 13px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin: 36px 0;
-            border: 1.2px solid var(--border-color);
-        }
-        .review-form h2 { margin-bottom: 20px; color: var(--accent-blue); font-weight: 700;}
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 11px;
-            border: 1.2px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 16px;
-            background: #fdfdff;
-            transition: border 0.2s, box-shadow 0.2s;
-        }
-        .form-group input:focus, .form-group textarea:focus { border: 1.2px solid var(--accent-blue); background: #fff; outline: none; box-shadow: 0 0 0 3px var(--accent-blue)22;}
-        .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 5px; }
-        .star-rating input { display: none; }
-        .star-rating label { font-size: 26px; color: #ccc; cursor: pointer; transition: color 0.2s; }
-        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: var(--accent-yellow); }
-        .btn {
-            background: var(--accent-blue);
-            color: #fff; border: none; padding: 13px 22px; border-radius: 6px;
-            cursor: pointer; font-size: 17px; transition: background .3s, box-shadow .2s;
-            font-weight: 600; box-shadow: 0 2px 10px var(--accent-blue)24;
-        }
-        .btn:hover { background: var(--accent-green);}
-        .reviews { margin: 35px 0; }
-        .review-card {
-            background: #fff;
-            padding: 22px 15px 14px 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            margin-bottom: 18px;
-            border: 1.2px solid var(--border-color);
-            transition: box-shadow 0.2s;
-            display: flex; flex-direction: column; gap: 2px;
-            cursor: pointer;
-        }
-        .review-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-        .review-header { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
-        .reviewer { font-weight: 500; color: var(--accent-blue); }
-        .review-date { color: var(--text-muted); font-size: 0.96rem; }
-        .notification {
-            position: fixed; top: 80px; right: 20px; padding: 15px 20px;
-            background: var(--accent-blue);
-            color: #fff; border-radius: 8px; box-shadow: 0 4px 18px rgba(0,0,0,0.15); display: none; font-size: 1.07rem;
-        }
-        .error {
-            color: #e74c3c; background: #ffeaea; padding: 12px; border-radius: 6px; margin: 10px 0; border: 1.2px solid #ffbdbd;
-        }
-        .loading { text-align: center; padding: 22px; font-size: 1.1rem; color: var(--text-muted);}
-        .loading::after { content: '...'; animation: dots 1.5s infinite; }
-        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; } }
-        @media (max-width: 700px) {
-            .container { padding: 0 15px;}
-            .header-content { flex-direction: column; gap: 1em;}
-            .search-bar { flex-direction: column;}
-            .search-bar input, .search-bar button { border-radius: 6px !important; }
-        }
-        .svg-book {
-            width: 2.3em; height: 2.3em; display: block; margin: auto;
-        }
-        .review-book-icon {
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 7px;
-            font-size: 1.1em;
-            color: var(--accent-blue);
-        }
-    </style>
-</head>
 <body>
     <div class="notification" id="notification"></div>
     <header>
@@ -164,7 +8,7 @@
                     <span class="book">book</span>
                     <span class="review">review</span>
                 </div>
-                <nav>
+                <nav id="main-nav" style="display:none;">
                     <ul>
                         <li><a id="home-btn">Home</a></li>
                         <li><a href="#add-review">Add Review</a></li>
@@ -174,305 +18,71 @@
         </div>
     </header>
 
-    <main class="container">
-        <div class="search-bar">
-            <input type="text" id="search-input" placeholder="Search for books, authors, or reviews...">
-            <button onclick="searchReviews()"><i class="fas fa-search"></i> Search</button>
-            <button id="clear-search-btn" style="display: none;" onclick="clearSearch()"><i class="fas fa-times"></i> Clear</button>
-        </div>
-
-        <div class="reviews" id="reviews">
-            <h2 id="reviews-heading">Recent Reviews</h2>
-            <div id="reviews-container">
-                <div class="loading">Loading reviews from the cloud</div>
-            </div>
-        </div>
-        
-        <div id="feat-i-section">
-            <h2>Featured Books</h2>
-            <div class="book-grid" id="book-grid"></div>
-        </div>
-
-        <div class="review-form" id="add-review">
-            <h2>Add Your Review</h2>
-            <form id="reviewForm">
-                <div class="form-group"><label for="studentName">Your Name</label><input type="text" id="studentName" placeholder="Enter your name" required></div>
-                <div class="form-group"><label for="bookTitle">Book Title</label><input type="text" id="bookTitle" placeholder="Enter book title" required></div>
-                <div class="form-group"><label for="bookAuthor">Author</label><input type="text" id="bookAuthor" placeholder="Enter author name" required></div>
+    <main class="container" id="login-container">
+        <div class="review-form">
+            <h2>Please Log In</h2>
+            <form id="loginForm">
                 <div class="form-group">
-                    <label>Your Rating</label>
-                    <div class="star-rating">
-                        <input type="radio" id="star5" name="rating" value="5"><label for="star5"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i class="fas fa-star"></i></label>
-                    </div>
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" placeholder="Enter your name" required>
                 </div>
-                <div class="form-group"><label for="review">Your Review</label><textarea id="review" placeholder="Share your thoughts..." required></textarea></div>
-                <button type="submit" class="btn">Submit Review</button>
+                <div class="form-group">
+                    <label for="code">Your Code</label>
+                    <input type="password" id="code" placeholder="Enter your secret code" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
             </form>
+            <p id="message" class="error"></p>
         </div>
     </main>
+
+    <div id="main-content" style="display:none;">
+        <main class="container">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search for books, authors, or reviews...">
+                <button onclick="searchReviews()"><i class="fas fa-search"></i> Search</button>
+                <button id="clear-search-btn" style="display: none;" onclick="clearSearch()"><i class="fas fa-times"></i> Clear</button>
+            </div>
+
+            <div class="reviews" id="reviews">
+                <h2 id="reviews-heading">Recent Reviews</h2>
+                <div id="reviews-container">
+                    <div class="loading">Loading reviews from the cloud</div>
+                </div>
+            </div>
+
+            <div id="feat-i-section">
+                <h2>Featured Books</h2>
+                <div class="book-grid" id="book-grid"></div>
+            </div>
+
+            <div class="review-form" id="add-review">
+                <h2>Add Your Review</h2>
+                <form id="reviewForm">
+                    <div class="form-group"><label for="studentName">Your Name</label><input type="text" id="studentName" placeholder="Enter your name" required></div>
+                    <div class="form-group"><label for="bookTitle">Book Title</label><input type="text" id="bookTitle" placeholder="Enter book title" required></div>
+                    <div class="form-group"><label for="bookAuthor">Author</label><input type="text" id="bookAuthor" placeholder="Enter author name" required></div>
+                    <div class="form-group">
+                        <label>Your Rating</label>
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="rating" value="5"><label for="star5"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                    <div class="form-group"><label for="review">Your Review</label><textarea id="review" placeholder="Share your thoughts..." required></textarea></div>
+                    <button type="submit" class="btn">Submit Review</button>
+                </form>
+            </div>
+        </main>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDZP3KwrswjdiDgMhvRe3cH0ngOqthEA9U",
-            authDomain: "outesbookreview.firebaseapp.com",
-            projectId: "outesbookreview",
-            storageBucket: "outesbookreview.appspot.com", 
-            messagingSenderId: "768178017652",
-            appId: "1:768178017652:web:bd358f130f8165f2f90821",
-            measurementId: "G-YM24P69ZVW"
-        };
-        try {
-            firebase.initializeApp(firebaseConfig);
-        } catch (error) {
-            document.getElementById('reviews-container').innerHTML = `
-                <div class="error">
-                    <p>Firebase initialization failed. Please check your configuration.</p>
-                    <p>Error: ${error.message}</p>
-                </div>
-            `;
-        }
-
-        const db = firebase.firestore();
-        const reviewsCollection = db.collection('reviews');
-        let allReviews = [];
-
-        function loadReviews() {
-            document.getElementById('reviews-container').innerHTML = '<div class="loading">Loading reviews from the cloud</div>';
-            reviewsCollection.orderBy("date", "desc").get()
-            .then((querySnapshot) => {
-                allReviews = [];
-                querySnapshot.forEach((doc) => {
-                    allReviews.push({ id: doc.id, ...doc.data() });
-                });
-                displayContent();
-            })
-            .catch((error) => {
-                document.getElementById('reviews-container').innerHTML = `
-                    <div class="error">
-                        <p>Error loading reviews: ${error.message}</p>
-                        <button onclick="loadReviews()" class="btn">Try Again</button>
-                    </div>
-                `;
-            });
-        }
-
-        function setupRealtimeListener() {
-            reviewsCollection.orderBy("date", "desc")
-            .onSnapshot((querySnapshot) => {
-                const newReviews = [];
-                querySnapshot.forEach((doc) => {
-                    newReviews.push({ id: doc.id, ...doc.data() });
-                });
-                if (newReviews.length !== allReviews.length || JSON.stringify(newReviews) !== JSON.stringify(allReviews)) {
-                    allReviews = newReviews;
-                    displayContent();
-                }
-            });
-        }
-
-        function displayContent() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-            let reviewsToShow = allReviews;
-            if (searchTerm) {
-                reviewsToShow = allReviews.filter(review =>
-                    (review.bookTitle && review.bookTitle.toLowerCase().includes(searchTerm)) ||
-                    (review.bookAuthor && review.bookAuthor.toLowerCase().includes(searchTerm)) ||
-                    (review.review && review.review.toLowerCase().includes(searchTerm)) ||
-                    (review.studentName && review.studentName.toLowerCase().includes(searchTerm))
-                );
-            }
-            displayReviews(reviewsToShow, searchTerm);
-            displayBookGrid(allReviews);
-        }
-
-        function displayReviews(reviewsToShow, searchTerm) {
-            const container = document.getElementById('reviews-container');
-            const heading = document.getElementById('reviews-heading');
-            container.innerHTML = '';
-
-            heading.textContent = searchTerm ? `Search Results for "${searchTerm}"` : 'Recent Reviews';
-
-            // Only show last 5 reviews (already sorted by date desc)
-            const reviewsToDisplay = reviewsToShow.slice(0, 5);
-
-            if (reviewsToDisplay.length === 0) {
-                container.innerHTML = `<p>${searchTerm ? 'No reviews found matching your search.' : 'No reviews yet. Be the first to add one!'}</p>`;
-                return;
-            }
-
-            reviewsToDisplay.forEach(review => {
-                const card = document.createElement('div');
-                card.className = 'review-card';
-                card.onclick = () => searchByBook(review.bookTitle);
-                card.innerHTML = `
-                    <div class="review-header">
-                        <span class="reviewer">${review.studentName || 'Anonymous'}</span>
-                        <span class="review-date">${review.date ? new Date(review.date).toLocaleDateString() : 'No date'}</span>
-                    </div>
-                    <div class="rating">${getStarRating(review.rating, false)}</div>
-                    <h3>
-                        <span class="review-book-icon" title="Book">&#128218;</span>
-                        ${review.bookTitle || 'No Title'}
-                        <span style="color: var(--text-muted); font-weight:400; font-size: 0.9em;">by ${review.bookAuthor || 'Unknown Author'}</span>
-                    </h3>
-                    <p>${review.review || ''}</p>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Show 20 unique random books
-        function displayBookGrid(sourceReviews) {
-            const grid = document.getElementById('book-grid');
-            const featuredSection = document.getElementById('feat-i-section');
-            const searchTerm = document.getElementById('search-input').value.trim();
-            grid.innerHTML = '';
-            featuredSection.style.display = searchTerm ? 'none' : 'block';
-            if (searchTerm) return;
-
-            const uniqueBooksMap = new Map();
-            sourceReviews.forEach(r => {
-                if (r.bookTitle && !uniqueBooksMap.has(r.bookTitle)) {
-                    uniqueBooksMap.set(r.bookTitle, r);
-                }
-            });
-
-            // Randomly select 20 unique books
-            const uniqueBooks = Array.from(uniqueBooksMap.values());
-            const selectedBooks = [];
-            const usedIdx = new Set();
-            while (selectedBooks.length < 20 && usedIdx.size < uniqueBooks.length) {
-                const idx = Math.floor(Math.random() * uniqueBooks.length);
-                if (!usedIdx.has(idx)) {
-                    selectedBooks.push(uniqueBooks[idx]);
-                    usedIdx.add(idx);
-                }
-            }
-
-            // SVG Book Icon with the NEW palette
-            const svgBook = `<svg class="svg-book" viewBox="0 0 48 48" fill="none">
-                <rect x="4" y="8" width="40" height="32" rx="6" fill="#3778c2"/>
-                <rect x="8" y="12" width="32" height="24" rx="4" fill="#fff"/>
-                <path d="M12 16h24M12 20h24M12 24h24" stroke="#f7b267" stroke-width="2" stroke-linecap="round"/>
-                <rect x="4" y="8" width="40" height="32" rx="6" stroke="#43aa8b" stroke-width="2"/>
-            </svg>`;
-
-            selectedBooks.forEach(review => {
-                const card = document.createElement('div');
-                card.className = 'book-card';
-                card.onclick = () => searchByBook(review.bookTitle);
-                const avgRating = getAverageRating(review.bookTitle);
-                card.innerHTML = `
-                    <div class="book-cover">${svgBook}</div>
-                    <div class="book-info">
-                        <h3 class="book-title">${review.bookTitle}</h3>
-                        <p class="book-author">${review.bookAuthor}</p>
-                        <div class="rating">${getStarRating(avgRating, true)}</div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-        
-        function getAverageRating(bookTitle) {
-            const bookReviews = allReviews.filter(r => r.bookTitle === bookTitle);
-            if (bookReviews.length === 0) return 0;
-            const total = bookReviews.reduce((sum, r) => sum + r.rating, 0);
-            return total / bookReviews.length;
-        }
-
-        function getStarRating(rating, showCount) {
-            let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                if (i <= rating) stars += '<i class="fas fa-star"></i>';
-                else if (i - 0.5 <= rating) stars += '<i class="fas fa-star-half-alt"></i>';
-                else stars += '<i class="far fa-star"></i>';
-            }
-            if (showCount) stars += ` <span style="color: var(--text-muted); font-size: 0.9em;">(${rating.toFixed(1)})</span>`;
-            return stars;
-        }
-        
-        function showNotification(message, isError = false) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.background = isError ? '#e74c3c' : 'var(--accent-blue)';
-            notification.style.display = 'block';
-            setTimeout(() => { notification.style.display = 'none'; }, 3000);
-        }
-
-        function searchReviews() {
-            const searchTerm = document.getElementById('search-input').value;
-            document.getElementById('clear-search-btn').style.display = searchTerm ? 'inline-block' : 'none';
-            displayContent();
-        }
-
-        function clearSearch() {
-            document.getElementById('search-input').value = '';
-            document.getElementById('clear-search-btn').style.display = 'none';
-            displayContent();
-        }
-
-        function searchByBook(bookTitle) {
-            if (!bookTitle) return;
-            document.getElementById('search-input').value = bookTitle;
-            document.getElementById('clear-search-btn').style.display = 'inline-block';
-            displayContent();
-            // Scroll to reviews section
-            document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const form = e.target;
-            const submitBtn = form.querySelector('button');
-            const rating = form.querySelector('input[name="rating"]:checked');
-            if (!rating) {
-                showNotification('Please select a rating.', true);
-                return;
-            }
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-            const newReview = {
-                studentName: form.studentName.value,
-                bookTitle: form.bookTitle.value,
-                bookAuthor: form.bookAuthor.value,
-                rating: parseInt(rating.value),
-                review: form.review.value,
-                date: new Date().toISOString()
-            };
-            try {
-                await reviewsCollection.add(newReview);
-                showNotification('Review submitted successfully!');
-                form.reset();
-            } catch (error) {
-                showNotification('Failed to submit review. Please try again.', true);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Review';
-            }
-        });
-
-        document.getElementById('home-btn').addEventListener('click', () => {
-            clearSearch();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        document.getElementById('clear-search-btn').addEventListener('click', clearSearch);
-        document.getElementById('search-input').addEventListener('keyup', e => {
-            if (e.key === 'Enter') searchReviews();
-        });
-
-        window.onload = function() {
-            loadReviews();
-            setupRealtimeListener();
-        };
+        // Your Firebase config and existing JavaScript functions...
     </script>
 </body>
 </html>
