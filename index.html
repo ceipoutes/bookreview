@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outesbookreview</title>
+    <title>Outesbookreview - Críticos Literarios Junior</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -51,7 +51,6 @@
             font-weight: 500;
         }
         nav ul li a:hover { color: var(--accent-green); }
-        /* Search bar prominence and dark style */
         .search-bar {
             margin: 40px 0 28px 0; display: flex;
             box-shadow: 0 4px 32px #4f8cff22, 0 1px 12px #0007;
@@ -125,6 +124,7 @@
         .book-title { font-size: 1.09rem; margin-bottom: 4px; color: var(--accent-blue); font-weight: 600;}
         .book-author { color: var(--text-muted); margin-bottom: 7px; }
         .rating { color: var(--accent-gold); margin-bottom: 8px; }
+        
         .review-form {
             background: var(--bg-card);
             padding: 28px; border-radius: 13px;
@@ -133,8 +133,8 @@
             border: 1.2px solid var(--border-gray);
         }
         .review-form h2 { margin-bottom: 20px; color: var(--accent-blue); font-weight: 700;}
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group { margin-bottom: 24px; }
+        .form-group label, .fieldset-label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--accent-green); }
         .form-group input, .form-group textarea {
             width: 100%; padding: 11px;
             border: 1.2px solid var(--border-gray);
@@ -144,13 +144,56 @@
             color: var(--text-main);
             transition: border 0.2s, background 0.17s;
         }
+        .form-group textarea { min-height: 80px; }
         .form-group input:focus, .form-group textarea:focus {
             border: 1.2px solid var(--accent-blue); background: #20263b; outline: none;
         }
+        
+        .form-fieldset {
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .form-fieldset legend {
+            padding: 0 10px;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+        .options-group { display: flex; flex-wrap: wrap; gap: 15px; }
+        .options-group label { display: flex; align-items: center; gap: 8px; font-weight: normal; color: var(--text-main); cursor: pointer; }
+        .options-group input[type="checkbox"], .options-group input[type="radio"] { width: auto; }
+        .inline-input { display: inline-block; width: auto; margin-left: 5px; }
+
         .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 5px; }
         .star-rating input { display: none; }
         .star-rating label { font-size: 26px; color: #444a62; cursor: pointer; transition: color 0.2s; }
         .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: var(--accent-gold); }
+        
+        .rating-explanation {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-top: 15px;
+            padding: 10px;
+            background: #1b2130;
+            border-radius: 6px;
+            border: 1px solid var(--border-gray);
+        }
+        .rating-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 0;
+        }
+        .rating-item .stars {
+            color: var(--accent-gold);
+            flex-shrink: 0;
+            width: 80px;
+        }
+        .rating-item .desc strong {
+            color: var(--text-main);
+        }
+
         .btn {
             background: linear-gradient(90deg, var(--accent-blue) 80%, var(--accent-green) 100%);
             color: #fff; border: none; padding: 13px 22px; border-radius: 6px;
@@ -158,22 +201,30 @@
             font-weight: 500; box-shadow: 0 2px 10px var(--accent-blue)14;
         }
         .btn:hover { background: linear-gradient(90deg, var(--accent-green) 80%, var(--accent-blue) 100%);}
+        
         .reviews { margin: 35px 0; }
         .review-card {
             background: var(--bg-card);
-            padding: 22px 15px 14px 15px;
+            padding: 22px;
             border-radius: 12px;
             box-shadow: 0 2px 8px #10131b44;
-            margin-bottom: 18px;
+            margin-bottom: 22px;
             border: 1.2px solid var(--border-gray);
             transition: box-shadow 0.15s, border 0.15s;
-            display: flex; flex-direction: column; gap: 2px;
-            cursor: pointer;
         }
         .review-card:hover { box-shadow: 0 8px 24px #4f8cff50; border-color: var(--accent-blue); background: #242b3b;}
-        .review-header { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
-        .reviewer { font-weight: 500; color: var(--accent-blue); }
+        .review-header { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; border-bottom: 1px solid var(--border-gray); padding-bottom: 10px; }
+        .reviewer { font-weight: bold; font-size: 1.1em; color: var(--accent-blue); }
         .review-date { color: var(--text-muted); font-size: 0.96rem; }
+        .review-card h3 { color: var(--accent-blue); font-size: 1.25rem; margin-top: 15px; margin-bottom: 5px;}
+        .review-card h4 { color: var(--accent-green); margin-top: 20px; margin-bottom: 8px; border-bottom: 1px solid var(--border-gray); padding-bottom: 5px;}
+        .review-card p { margin-top: 0; margin-bottom: 10px; }
+        .review-card .rating-section { margin-top: 20px; text-align: center; background: #1b2130; padding: 15px; border-radius: 8px;}
+        .review-card .rating-section .stars { font-size: 1.5rem; color: var(--accent-gold); }
+        .review-card .rating-section p { font-style: italic; margin-top: 10px; }
+        .review-card ul { list-style-type: '✔️'; padding-left: 20px; }
+        .review-card li { margin-bottom: 5px; }
+
         .notification {
             position: fixed; top: 80px; right: 20px; padding: 15px 20px;
             background: var(--accent-blue);
@@ -194,14 +245,6 @@
         .svg-book {
             width: 2.2em; height: 2.2em; display: block; margin: auto;
         }
-        .review-book-icon {
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 7px;
-            font-size: 1.1em;
-            color: var(--accent-blue);
-        }
-        /* Login Modal Styles */
         #login-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -264,7 +307,6 @@
             min-height: 1.5em;
             font-size: 1em;
         }
-        /* Hide main content until login */
         body.login-required main,
         body.login-required header nav,
         body.login-required .search-bar,
@@ -277,11 +319,11 @@
     <div class="notification" id="notification"></div>
     <div id="login-modal">
         <div class="modal-content">
-            <h2>Login</h2>
+            <h2>Iniciar Sesión</h2>
             <form id="loginForm" autocomplete="off">
-                <input type="text" id="name" placeholder="Name" required autocomplete="username">
-                <input type="password" id="code" placeholder="Access Code" required autocomplete="current-password">
-                <button type="submit">Login</button>
+                <input type="text" id="name" placeholder="Nombre" required autocomplete="username">
+                <input type="password" id="code" placeholder="Código de Acceso" required autocomplete="current-password">
+                <button type="submit">Entrar</button>
                 <div id="message"></div>
             </form>
         </div>
@@ -296,9 +338,9 @@
                 </div>
                 <nav>
                     <ul>
-                        <li><a id="home-btn">Home</a></li>
-                        <li><a href="#add-review">Add Review</a></li>
-                        <li><a id="logout-btn" style="display:none;">Logout</a></li>
+                        <li><a id="home-btn">Inicio</a></li>
+                        <li><a id="add-review-btn" href="#add-review">Añadir Reseña</a></li>
+                        <li><a id="logout-btn" style="display:none;">Salir</a></li>
                     </ul>
                 </nav>
             </div>
@@ -307,40 +349,164 @@
 
     <main class="container">
         <div class="search-bar">
-            <input type="text" id="search-input" placeholder="Search for books, authors, or reviews...">
-            <button onclick="searchReviews()"><i class="fas fa-search"></i> Search</button>
-            <button id="clear-search-btn" style="display: none;" onclick="clearSearch()"><i class="fas fa-times"></i> Clear</button>
+            <input type="text" id="search-input" placeholder="Buscar libros, autores o reseñas...">
+            <button id="search-btn"><i class="fas fa-search"></i> Buscar</button>
+            <button id="clear-search-btn" style="display: none;"><i class="fas fa-times"></i> Limpiar</button>
         </div>
 
         <div class="reviews" id="reviews">
-            <h2 id="reviews-heading">Recent Reviews</h2>
+            <h2 id="reviews-heading">Reseñas Recientes</h2>
             <div id="reviews-container">
-                <div class="loading">Loading reviews from the cloud</div>
+                <div class="loading">Cargando reseñas desde la nube</div>
             </div>
         </div>
         
         <div id="feat-i-section">
-            <h2>Featured Books</h2>
+            <h2>Libros Destacados</h2>
             <div class="book-grid" id="book-grid"></div>
         </div>
 
         <div class="review-form" id="add-review">
-            <h2>Add Your Review</h2>
+            <h2>Críticos Literarios Junior: Añade tu Crítica</h2>
             <form id="reviewForm">
-                <div class="form-group"><label for="bookTitle">Book Title</label><input type="text" id="bookTitle" name="bookTitle" placeholder="Enter book title" required></div>
-                <div class="form-group"><label for="bookAuthor">Author</label><input type="text" id="bookAuthor" name="bookAuthor" placeholder="Enter author name" required></div>
-                <div class="form-group">
-                    <label>Your Rating</label>
-                    <div class="star-rating">
-                        <input type="radio" id="star5" name="rating" value="5"><label for="star5"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i class="fas fa-star"></i></label>
-                        <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i class="fas fa-star"></i></label>
+                <fieldset class="form-fieldset">
+                    <legend>📖 FICHA DEL LIBRO</legend>
+                    <div class="form-group">
+                        <label for="bookTitle">Título del libro</label>
+                        <input type="text" id="bookTitle" required>
                     </div>
-                </div>
-                <div class="form-group"><label for="review">Your Review</label><textarea id="review" name="review" placeholder="Share your thoughts..." required></textarea></div>
-                <button type="submit" class="btn">Submit Review</button>
+                    <div class="form-group">
+                        <label for="bookAuthor">Autor/a</label>
+                        <input type="text" id="bookAuthor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editorial">Editorial</label>
+                        <input type="text" id="editorial">
+                    </div>
+                    <div class="form-group">
+                        <label for="pages">Número de páginas</label>
+                        <input type="number" id="pages">
+                    </div>
+                    <div class="form-group">
+                        <label class="fieldset-label">Género</label>
+                        <div class="options-group">
+                            <label><input type="checkbox" name="genre" value="Aventuras"> Aventuras</label>
+                            <label><input type="checkbox" name="genre" value="Misterio"> Misterio</label>
+                            <label><input type="checkbox" name="genre" value="Fantasía"> Fantasía</label>
+                            <label><input type="checkbox" name="genre" value="Realista"> Realista</label>
+                            <label><input type="checkbox" name="genre" value="Cómico"> Cómico</label>
+                            <label><input type="checkbox" name="genre" value="Otro"> Otro: <input type="text" id="genreOther" class="inline-input"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="fieldset-label">Lo leí en:</label>
+                        <div class="options-group">
+                            <label><input type="radio" name="readTime" value="Una semana"> Una semana</label>
+                            <label><input type="radio" name="readTime" value="Dos semanas"> Dos semanas</label>
+                            <label><input type="radio" name="readTime" value="Más tiempo"> Más tiempo</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-fieldset">
+                    <legend>✍️ MI OPINIÓN SOBRE EL LIBRO</legend>
+                    <div class="form-group">
+                        <label for="summary">1. RESUMEN BREVE (¿DE QUÉ TRATA?)</label>
+                        <textarea id="summary" placeholder="Escribe 3-4 líneas explicando de qué va la historia" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="fieldset-label">2. PERSONAJE PRINCIPAL</label>
+                        <label for="favCharacter">Personaje que más me gustó:</label>
+                        <input type="text" id="favCharacter" style="margin-bottom: 8px;">
+                        <label for="favCharacterReason">¿Por qué?</label>
+                        <textarea id="favCharacterReason"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="favMoment">3. PARTE FAVORITA</label>
+                        <textarea id="favMoment" placeholder="La parte que más me gustó fue cuando..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="fieldset-label">4. SI YO FUERA EL AUTOR/A...</label>
+                        <div class="options-group">
+                             <label><input type="radio" name="changeStory" value="no"> No cambiaría nada, me encantó todo</label>
+                             <label><input type="radio" name="changeStory" value="yes"> Sí cambiaría:</label>
+                             <input type="text" id="changeStoryText" placeholder="el final, un personaje, etc.">
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <fieldset class="form-fieldset">
+                    <legend>⭐ MI VALORACIÓN</legend>
+                     <div class="form-group">
+                        <label>PUNTUACIÓN CON ESTRELLAS:</label>
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="Excelente">⭐</label>
+                            <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="Muy Bueno">⭐</label>
+                            <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="Bueno">⭐</label>
+                            <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="Regular">⭐</label>
+                            <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="No me gustó">⭐</label>
+                        </div>
+                        <div class="rating-explanation">
+                            <div class="rating-item"><span class="stars">⭐⭐⭐⭐⭐</span> <span class="desc"><strong>Excelente:</strong> Me encantó, lo recomiendo a todo el mundo.</span></div>
+                            <div class="rating-item"><span class="stars">⭐⭐⭐⭐</span> <span class="desc"><strong>Muy Bueno:</strong> Me gustó mucho, tiene partes geniales.</span></div>
+                            <div class="rating-item"><span class="stars">⭐⭐⭐</span> <span class="desc"><strong>Bueno:</strong> Está bien, me entretuvo.</span></div>
+                            <div class="rating-item"><span class="stars">⭐⭐</span> <span class="desc"><strong>Regular:</strong> Hay cosas que mejorar.</span></div>
+                            <div class="rating-item"><span class="stars">⭐</span> <span class="desc"><strong>No me gustó:</strong> No lo recomendaría.</span></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ratingReason">¿POR QUÉ ESA PUNTUACIÓN?</label>
+                        <textarea id="ratingReason" placeholder="Explica brevemente por qué le das esas estrellas" required></textarea>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-fieldset">
+                    <legend>📢 RECOMENDACIÓN FINAL</legend>
+                    <div class="form-group">
+                        <label class="fieldset-label">¿A QUIÉN SE LO RECOMENDARÍAS?</label>
+                        <div class="options-group">
+                           <label><input type="checkbox" name="recommendTo" value="A los que les gusten las aventuras emocionantes"> A los que les gusten las aventuras emocionantes</label>
+                           <label><input type="checkbox" name="recommendTo" value="A los que prefieren historias de la vida real"> A los que prefieren historias de la vida real</label>
+                           <label><input type="checkbox" name="recommendTo" value="A los que buscan misterio y suspense"> A los que buscan misterio y suspense</label>
+                           <label><input type="checkbox" name="recommendTo" value="A quienes les encanta reír con las lecturas"> A quienes les encanta reír con las lecturas</label>
+                           <label><input type="checkbox" name="recommendTo" value="A cualquier compañero/a de clase"> A cualquier compañero/a de clase</label>
+                           <label>Especialmente para: <input type="text" id="recommendToOther" class="inline-input"></label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-fieldset">
+                    <legend>💬 PARA PENSAR UN POCO MÁS</legend>
+                    <div class="form-group">
+                        <label class="fieldset-label">Lo que aprendí con este libro:</label>
+                         <div class="options-group">
+                           <label><input type="checkbox" name="learned" value="Sobre la amistad"> Sobre la amistad</label>
+                           <label><input type="checkbox" name="learned" value="Sobre la valentía"> Sobre la valentía</label>
+                           <label><input type="checkbox" name="learned" value="Sobre la familia"> Sobre la familia</label>
+                           <label><input type="checkbox" name="learned" value="Sobre superar miedos"> Sobre superar miedos</label>
+                           <label><input type="checkbox" name="learned" value="Sobre la importancia de ser uno mismo"> Sobre la importancia de ser uno mismo</label>
+                           <label>Otra cosa: <input type="text" id="learnedOther" class="inline-input"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="fieldset-label">¿Volverías a leerlo?</label>
+                        <div class="options-group">
+                            <label><input type="radio" name="readAgain" value="Sí"> Sí</label>
+                            <label><input type="radio" name="readAgain" value="No"> No</label>
+                            <label><input type="radio" name="readAgain" value="Quizás"> Quizás</label>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label class="fieldset-label">¿Leerías otro libro del mismo autor?</label>
+                        <div class="options-group">
+                            <label><input type="radio" name="readAuthorAgain" value="Sí"> Sí</label>
+                            <label><input type="radio" name="readAuthorAgain" value="No"> No</label>
+                            <label><input type="radio" name="readAuthorAgain" value="No sé"> No sé</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn">Enviar Crítica</button>
             </form>
         </div>
     </main>
@@ -349,7 +515,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Firebase configuration
+        // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDZP3KwrswjdiDgMhvRe3cH0ngOqthEA9U",
             authDomain: "outesbookreview.firebaseapp.com",
@@ -362,12 +528,7 @@
         try {
             firebase.initializeApp(firebaseConfig);
         } catch (error) {
-            document.getElementById('reviews-container').innerHTML = `
-                <div class="error">
-                    <p>Firebase initialization failed. Please check your configuration.</p>
-                    <p>Error: ${error.message}</p>
-                </div>
-            `;
+            document.getElementById('reviews-container').innerHTML = `<div class="error"><p>Fallo al inicializar Firebase.</p></div>`;
         }
 
         const db = firebase.firestore();
@@ -375,7 +536,6 @@
         let allReviews = [];
         let loggedInUser = null;
 
-        // --- LOGIN LOGIC ---
         const loginForm = document.getElementById('loginForm');
         if (loginForm) {
             loginForm.addEventListener('submit', async (e) => {
@@ -386,7 +546,7 @@
                 messageEl.textContent = "";
 
                 if (!nameInput || !codeInput) {
-                    messageEl.textContent = "Please enter both name and code.";
+                    messageEl.textContent = "Por favor, introduce nombre y código.";
                     return;
                 }
 
@@ -400,11 +560,10 @@
                         loggedInUser = userDoc.name;
                         showMainContent();
                     } else {
-                        messageEl.textContent = "Invalid name or code.";
+                        messageEl.textContent = "Nombre o código inválido.";
                     }
                 } catch (error) {
-                    console.error("Error during login: ", error);
-                    messageEl.textContent = "An error occurred. Please try again.";
+                    messageEl.textContent = "Ocurrió un error. Por favor, inténtalo de nuevo.";
                 }
             });
         }
@@ -417,7 +576,6 @@
             setupRealtimeListener();
         }
 
-        // --- LOGOUT LOGIC ---
         document.getElementById('logout-btn').addEventListener('click', function() {
             loggedInUser = null;
             document.body.classList.add('login-required');
@@ -428,7 +586,7 @@
         });
 
         function loadReviews() {
-            document.getElementById('reviews-container').innerHTML = '<div class="loading">Loading reviews from the cloud</div>';
+            document.getElementById('reviews-container').innerHTML = '<div class="loading">Cargando reseñas...</div>';
             reviewsCollection.orderBy("date", "desc").get()
             .then((querySnapshot) => {
                 allReviews = [];
@@ -438,12 +596,7 @@
                 displayContent();
             })
             .catch((error) => {
-                document.getElementById('reviews-container').innerHTML = `
-                    <div class="error">
-                        <p>Error loading reviews: ${error.message}</p>
-                        <button onclick="loadReviews()" class="btn">Try Again</button>
-                    </div>
-                `;
+                document.getElementById('reviews-container').innerHTML = `<div class="error"><p>Error al cargar las reseñas.</p></div>`;
             });
         }
 
@@ -454,22 +607,20 @@
                 querySnapshot.forEach((doc) => {
                     newReviews.push({ id: doc.id, ...doc.data() });
                 });
-                if (newReviews.length !== allReviews.length || JSON.stringify(newReviews) !== JSON.stringify(allReviews)) {
-                    allReviews = newReviews;
-                    displayContent();
-                }
+                allReviews = newReviews;
+                displayContent();
             });
         }
-
+        
+        // --- LÓGICA DE BÚSQUEDA Y VISUALIZACIÓN ---
         function displayContent() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
             let reviewsToShow = allReviews;
             if (searchTerm) {
                 reviewsToShow = allReviews.filter(review =>
-                    (review.bookTitle && review.bookTitle.toLowerCase().includes(searchTerm)) ||
-                    (review.bookAuthor && review.bookAuthor.toLowerCase().includes(searchTerm)) ||
-                    (review.review && review.review.toLowerCase().includes(searchTerm)) ||
-                    (review.studentName && review.studentName.toLowerCase().includes(searchTerm))
+                    Object.values(review).some(val => 
+                        String(val).toLowerCase().includes(searchTerm)
+                    )
                 );
             }
             displayReviews(reviewsToShow, searchTerm);
@@ -480,36 +631,62 @@
             const container = document.getElementById('reviews-container');
             const heading = document.getElementById('reviews-heading');
             container.innerHTML = '';
-
-            heading.textContent = searchTerm ? `Search Results for "${searchTerm}"` : 'Recent Reviews';
-
-            // Only show last 3 reviews (already sorted by date desc)
-            const reviewsToDisplay = reviewsToShow.slice(0, 3);
-
-            if (reviewsToDisplay.length === 0) {
-                container.innerHTML = `<p>${searchTerm ? 'No reviews found matching your search.' : 'No reviews yet. Be the first to add one!'}</p>`;
+            heading.textContent = searchTerm ? `Resultados para "${searchTerm}"` : 'Críticas Recientes';
+            
+            if (reviewsToShow.length === 0) {
+                container.innerHTML = `<p>${searchTerm ? 'No se encontraron críticas.' : 'Aún no hay críticas. ¡Sé el primero!'}</p>`;
                 return;
             }
 
-            reviewsToDisplay.forEach(review => {
+            reviewsToShow.forEach(review => {
                 const card = document.createElement('div');
                 card.className = 'review-card';
-                card.onclick = () => searchByBook(review.bookTitle);
+                const sanitize = (str) => str ? String(str).replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
+
+                let genresHTML = review.genres?.length > 0 ? `<li><strong>Género:</strong> ${review.genres.join(', ')}</li>` : '';
+                let recommendationsHTML = review.recommendations?.length > 0 ? `<h4>📢 RECOMENDACIÓN FINAL</h4><ul>${review.recommendations.map(r => `<li>${sanitize(r)}</li>`).join('')}</ul>` : '';
+                let learningsHTML = review.learnings?.length > 0 ? `<h4>💬 PARA PENSAR UN POCO MÁS</h4><ul>${review.learnings.map(l => `<li>${sanitize(l)}</li>`).join('')}</ul>` : '';
+                
                 card.innerHTML = `
                     <div class="review-header">
-                        <span class="reviewer">${review.studentName || 'Anonymous'}</span>
-                        <span class="review-date">${review.date ? new Date(review.date).toLocaleDateString() : 'No date'}</span>
+                        <span class="reviewer">${sanitize(review.studentName || 'Anónimo')}</span>
+                        <span class="review-date">${review.date ? new Date(review.date).toLocaleDateString() : ''}</span>
                     </div>
-                    <div class="rating">${getStarRating(review.rating, false)}</div>
-                    <h3>
-                        <span class="review-book-icon" title="Book">&#128218;</span>
-                        ${review.bookTitle || 'No Title'}
-                        <span style="color: var(--text-muted); font-weight:400; font-size: 0.9em;">by ${review.bookAuthor || 'Unknown Author'}</span>
-                    </h3>
-                    <p>${review.review || ''}</p>
+                    <h3>${sanitize(review.bookTitle || 'Sin Título')}</h3>
+                    <p>por ${sanitize(review.bookAuthor || 'Autor Desconocido')}</p>
+                    
+                    <ul>
+                        ${genresHTML}
+                        ${review.editorial ? `<li><strong>Editorial:</strong> ${sanitize(review.editorial)}</li>` : ''}
+                        ${review.pages ? `<li><strong>Nº de páginas:</strong> ${sanitize(review.pages)}</li>` : ''}
+                        ${review.readTime ? `<li><strong>Leído en:</strong> ${sanitize(review.readTime)}</li>` : ''}
+                    </ul>
+
+                    <h4>✍️ MI OPINIÓN</h4>
+                    <p><strong>Resumen:</strong> ${sanitize(review.summary)}</p>
+                    <p><strong>Personaje favorito:</strong> ${sanitize(review.favCharacter)} (${sanitize(review.favCharacterReason)})</p>
+                    <p><strong>Parte favorita:</strong> ${sanitize(review.favMoment)}</p>
+                    <p><strong>Si yo fuera el autor/a:</strong> ${sanitize(review.changeStory)}</p>
+
+                    <div class="rating-section">
+                        <h4>⭐ MI VALORACIÓN</h4>
+                        <div class="stars">${getStarRating(review.rating)}</div>
+                        <p>"${sanitize(review.ratingReason)}"</p>
+                    </div>
+
+                    ${recommendationsHTML}
+                    ${learningsHTML}
                 `;
                 container.appendChild(card);
             });
+        }
+        
+        function getStarRating(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<i class="${i <= rating ? 'fas' : 'far'} fa-star"></i>`;
+            }
+            return stars;
         }
 
         function displayBookGrid(sourceReviews) {
@@ -528,79 +705,22 @@
             });
 
             const uniqueBooks = Array.from(uniqueBooksMap.values());
-            const selectedBooks = [];
-            const usedIdx = new Set();
-            while (selectedBooks.length < 20 && usedIdx.size < uniqueBooks.length) {
-                const idx = Math.floor(Math.random() * uniqueBooks.length);
-                if (!usedIdx.has(idx)) {
-                    selectedBooks.push(uniqueBooks[idx]);
-                    usedIdx.add(idx);
-                }
-            }
-
-            // SVG Book Icon
-            const svgBook = `<svg class="svg-book" viewBox="0 0 48 48" fill="none">
-                <rect x="4" y="8" width="40" height="32" rx="6" fill="#4f8cff"/>
-                <rect x="8" y="12" width="32" height="24" rx="4" fill="#23283a"/>
-                <path d="M12 16h24M12 20h24M12 24h24" stroke="#43aa8b" stroke-width="2" stroke-linecap="round"/>
-                <rect x="4" y="8" width="40" height="32" rx="6" stroke="#ffe066" stroke-width="2"/>
-            </svg>`;
+            const selectedBooks = uniqueBooks.slice(0, 20); // Simpler selection
 
             selectedBooks.forEach(review => {
                 const card = document.createElement('div');
                 card.className = 'book-card';
                 card.onclick = () => searchByBook(review.bookTitle);
-                const avgRating = getAverageRating(review.bookTitle);
                 card.innerHTML = `
-                    <div class="book-cover">${svgBook}</div>
+                    <div class="book-cover"><i class="fas fa-book-open" style="font-size: 2em;"></i></div>
                     <div class="book-info">
                         <h3 class="book-title">${review.bookTitle}</h3>
                         <p class="book-author">${review.bookAuthor}</p>
-                        <div class="rating">${getStarRating(avgRating, true)}</div>
+                        <div class="rating">${getStarRating(review.rating)}</div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
-        }
-        
-        function getAverageRating(bookTitle) {
-            const bookReviews = allReviews.filter(r => r.bookTitle === bookTitle);
-            if (bookReviews.length === 0) return 0;
-            const total = bookReviews.reduce((sum, r) => sum + r.rating, 0);
-            return total / bookReviews.length;
-        }
-
-        function getStarRating(rating, showCount) {
-            let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                if (i <= rating) stars += '<i class="fas fa-star"></i>';
-                else if (i - 0.5 <= rating) stars += '<i class="fas fa-star-half-alt"></i>';
-                else stars += '<i class="far fa-star"></i>';
-            }
-            if (showCount) stars += ` <span>(${rating.toFixed(1)})</span>`;
-            return stars;
-        }
-        
-        function showNotification(message, isError = false) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.background = isError
-                ? 'linear-gradient(90deg, #e74c3c 80%, #ffbdbd 100%)'
-                : 'var(--accent-blue)';
-            notification.style.display = 'block';
-            setTimeout(() => { notification.style.display = 'none'; }, 3000);
-        }
-
-        function searchReviews() {
-            const searchTerm = document.getElementById('search-input').value;
-            document.getElementById('clear-search-btn').style.display = searchTerm ? 'inline-block' : 'none';
-            displayContent();
-        }
-
-        function clearSearch() {
-            document.getElementById('search-input').value = '';
-            document.getElementById('clear-search-btn').style.display = 'none';
-            displayContent();
         }
 
         function searchByBook(bookTitle) {
@@ -611,54 +731,117 @@
             document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' });
         }
 
+        // --- LÓGICA DE ENVÍO DEL FORMULARIO ---
         document.getElementById('reviewForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const form = e.target;
-            const submitBtn = form.querySelector('button');
-            const rating = form.querySelector('input[name="rating"]:checked');
-            if (!rating) {
-                showNotification('Please select a rating.', true);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            if (!loggedInUser) {
+                showNotification('Debes iniciar sesión para enviar una crítica.', true);
                 return;
             }
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
+            submitBtn.textContent = 'Enviando...';
 
-            if (!loggedInUser) {
-                showNotification('You must be logged in to submit a review.', true);
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Review';
-                return;
+            // Recopilar datos del formulario
+            const getCheckedValues = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(cb => cb.value);
+            const getRadioValue = (name) => document.querySelector(`input[name="${name}"]:checked`)?.value || '';
+
+            const genres = getCheckedValues('genre');
+            if (document.getElementById('genreOther').value) {
+                genres.push(document.getElementById('genreOther').value);
             }
+            const recommendations = getCheckedValues('recommendTo');
+             if (document.getElementById('recommendToOther').value) {
+                recommendations.push(document.getElementById('recommendToOther').value);
+            }
+            const learnings = getCheckedValues('learned');
+            if (document.getElementById('learnedOther').value) {
+                learnings.push(document.getElementById('learnedOther').value);
+            }
+
             const newReview = {
                 studentName: loggedInUser,
-                bookTitle: form.bookTitle.value,
-                bookAuthor: form.bookAuthor.value,
-                rating: parseInt(rating.value),
-                review: form.review.value,
-                date: new Date().toISOString()
+                date: new Date().toISOString(),
+                // Ficha del libro
+                bookTitle: document.getElementById('bookTitle').value,
+                bookAuthor: document.getElementById('bookAuthor').value,
+                editorial: document.getElementById('editorial').value,
+                pages: document.getElementById('pages').value,
+                genres: genres,
+                readTime: getRadioValue('readTime'),
+                // Mi opinión
+                summary: document.getElementById('summary').value,
+                favCharacter: document.getElementById('favCharacter').value,
+                favCharacterReason: document.getElementById('favCharacterReason').value,
+                favMoment: document.getElementById('favMoment').value,
+                changeStory: getRadioValue('changeStory') === 'yes' ? document.getElementById('changeStoryText').value : 'No cambiaría nada',
+                // Valoración
+                rating: parseInt(getRadioValue('rating') || 0),
+                ratingReason: document.getElementById('ratingReason').value,
+                // Recomendación y reflexión
+                recommendations: recommendations,
+                learnings: learnings,
+                readAgain: getRadioValue('readAgain'),
+                readAuthorAgain: getRadioValue('readAuthorAgain'),
             };
+
             try {
                 await reviewsCollection.add(newReview);
-                showNotification('Review submitted successfully!');
+                showNotification('¡Crítica enviada con éxito!');
                 form.reset();
             } catch (error) {
-                showNotification('Failed to submit review. Please try again.', true);
+                showNotification('Error al enviar la crítica. Inténtalo de nuevo.', true);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Review';
+                submitBtn.textContent = 'Enviar Crítica';
             }
         });
+        
+        // --- HELPERS Y OTROS EVENTOS ---
+        const searchInput = document.getElementById('search-input');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const searchBtn = document.getElementById('search-btn');
 
-        document.getElementById('home-btn').addEventListener('click', () => {
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.background = isError ? '#e74c3c' : 'var(--accent-blue)';
+            notification.style.display = 'block';
+            setTimeout(() => { notification.style.display = 'none'; }, 3000);
+        }
+
+        function searchReviews() {
+            clearSearchBtn.style.display = searchInput.value ? 'inline-block' : 'none';
+            displayContent();
+        }
+        function clearSearch() {
+            searchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+            displayContent();
+        }
+        
+        searchBtn.addEventListener('click', searchReviews);
+        clearSearchBtn.addEventListener('click', clearSearch);
+
+        document.getElementById('home-btn').addEventListener('click', (e) => {
+            e.preventDefault();
             clearSearch();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-
-        document.getElementById('clear-search-btn').addEventListener('click', clearSearch);
-        document.getElementById('search-input').addEventListener('keyup', e => {
-            if (e.key === 'Enter') searchReviews();
+        document.getElementById('add-review-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('add-review').scrollIntoView({ behavior: 'smooth' });
         });
+        
+        searchInput.addEventListener('keyup', e => {
+            if (e.key === 'Enter') searchReviews();
+            else searchReviews();
+        });
+
     });
     </script>
 </body>
 </html>
+
