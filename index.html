@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outesbookreview - Crítica Literaria</title>
+    <title>Outesbookreview - Críticos Literarios Junior</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -21,6 +21,10 @@
         }
         html {
             scroll-behavior: smooth;
+            box-sizing: border-box;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
         }
         body {
             background: var(--bg-main);
@@ -175,21 +179,17 @@
         .options-group label { display: flex; align-items: center; gap: 8px; font-weight: normal; color: var(--text-main); cursor: pointer; }
         .options-group input[type="checkbox"], .options-group input[type="radio"] { width: auto; flex-shrink: 0;}
         
-        /* --- Fixed inline input styles --- */
         .inline-input-label {
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
-            width: 100%;
+            flex-grow: 1;
         }
         .inline-input {
-            flex: 1 1 auto;
-            min-width: 0;
-            max-width: 100%;
-            box-sizing: border-box;
+            flex-grow: 1;
             padding: 6px 8px !important;
             font-size: 15px !important;
+            min-width: 0;
         }
 
         .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 5px; }
@@ -198,6 +198,15 @@
         .star-rating label:hover { transform: scale(1.2); }
         .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: var(--accent-gold); }
         
+        .star-feedback {
+            text-align: center;
+            margin-top: 10px;
+            color: var(--accent-gold);
+            font-weight: bold;
+            height: 20px; /* Reserve space to prevent layout shift */
+            transition: color 0.2s;
+        }
+
         .rating-explanation {
             font-size: 0.9em;
             color: var(--text-muted);
@@ -310,13 +319,6 @@
             .container { padding: 0 10px;}
             .search-bar { flex-direction: column;}
             .search-bar input, .search-bar button { border-radius: 9px !important; }
-
-            /* Additional small-screen safety for inline inputs */
-            .inline-input-label {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .inline-input { width: 100%; }
         }
         
         #login-modal {
@@ -450,7 +452,7 @@
         </div>
         
         <div class="review-form" id="add-review">
-            <h2>Añade tu Crítica</h2>
+            <h2>Críticos Literarios Junior: Añade tu Crítica</h2>
             <form id="reviewForm">
                 <fieldset class="form-fieldset">
                     <legend>📖 FICHA DEL LIBRO</legend>
@@ -484,6 +486,7 @@
                     <div class="form-group">
                         <label class="fieldset-label">Lo leí en:</label>
                         <div class="options-group">
+                            <label><input type="radio" name="readTime" value="1 día"> 1 día</label>
                             <label><input type="radio" name="readTime" value="Una semana"> Una semana</label>
                             <label><input type="radio" name="readTime" value="Dos semanas"> Dos semanas</label>
                             <label><input type="radio" name="readTime" value="Más tiempo"> Más tiempo</label>
@@ -528,6 +531,7 @@
                             <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="Regular">⭐</label>
                             <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="No me gustó">⭐</label>
                         </div>
+                        <div id="star-rating-feedback" class="star-feedback"></div>
                         <div class="rating-explanation">
                             <div class="rating-item"><span class="stars">⭐⭐⭐⭐⭐</span> <span class="desc"><strong>Excelente:</strong> Me encantó, lo recomiendo.</span></div>
                             <div class="rating-item"><span class="stars">⭐⭐⭐⭐</span> <span class="desc"><strong>Muy Bueno:</strong> Me gustó mucho.</span></div>
@@ -908,6 +912,41 @@
             displayContent();
         }
         
+        // --- LÓGICA DE INTERACCIÓN DE ESTRELLAS ---
+        const starLabels = document.querySelectorAll('.star-rating label');
+        const starInputs = document.querySelectorAll('.star-rating input[name="rating"]');
+        const starFeedback = document.getElementById('star-rating-feedback');
+        const starRatingContainer = document.querySelector('.star-rating');
+        const defaultStarFeedback = 'Pasa el ratón por las estrellas para valorar';
+
+        starFeedback.textContent = defaultStarFeedback;
+
+        starLabels.forEach(label => {
+            label.addEventListener('mouseenter', () => {
+                starFeedback.textContent = label.title;
+            });
+        });
+
+        starRatingContainer.addEventListener('mouseleave', () => {
+            const checkedInput = document.querySelector('.star-rating input[name="rating"]:checked');
+            if (checkedInput) {
+                const checkedLabel = document.querySelector(`label[for="${checkedInput.id}"]`);
+                starFeedback.textContent = checkedLabel.title;
+            } else {
+                starFeedback.textContent = defaultStarFeedback;
+            }
+        });
+
+        starInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                const checkedLabel = document.querySelector(`label[for="${input.id}"]`);
+                if (input.checked) {
+                    starFeedback.textContent = checkedLabel.title;
+                }
+            });
+        });
+
+        // --- ASIGNACIÓN DE EVENTOS DE NAVEGACIÓN Y BÚSQUEDA ---
         document.getElementById('search-btn').addEventListener('click', () => {
              visibleReviewsCount = allReviews.length;
              visibleBooksCount = allReviews.length;
@@ -954,3 +993,4 @@
     </script>
 </body>
 </html>
+
