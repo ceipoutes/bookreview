@@ -175,18 +175,21 @@
         .options-group label { display: flex; align-items: center; gap: 8px; font-weight: normal; color: var(--text-main); cursor: pointer; }
         .options-group input[type="checkbox"], .options-group input[type="radio"] { width: auto; flex-shrink: 0;}
         
+        /* --- Fixed inline input styles --- */
         .inline-input-label {
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-grow: 1;
-            flex-basis: 200px;
+            flex-wrap: wrap;
+            width: 100%;
         }
         .inline-input {
-            flex-grow: 1;
+            flex: 1 1 auto;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
             padding: 6px 8px !important;
             font-size: 15px !important;
-            min-width: 100px;
         }
 
         .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 5px; }
@@ -307,6 +310,13 @@
             .container { padding: 0 10px;}
             .search-bar { flex-direction: column;}
             .search-bar input, .search-bar button { border-radius: 9px !important; }
+
+            /* Additional small-screen safety for inline inputs */
+            .inline-input-label {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .inline-input { width: 100%; }
         }
         
         #login-modal {
@@ -944,4 +954,3 @@
     </script>
 </body>
 </html>
-
